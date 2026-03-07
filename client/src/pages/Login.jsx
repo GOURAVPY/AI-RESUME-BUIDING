@@ -1,7 +1,10 @@
 import React from "react";
+import  { LockOpenIcon, Mail, User2Icon } from 'lucide-react'
 
 const Login = () => {
-  const [state, setState] = React.useState("login");
+  const query = new URLSearchParams(window.location.search)
+  const urlstate = query.get('state')
+  const [state, setState] = React.useState(urlstate || "login");
 
   const [formData, setFormData] = React.useState({
     name: "",
@@ -27,25 +30,11 @@ const Login = () => {
           {state === "login" ? "Login" : "Sign up"}
         </h1>
         <p className="text-gray-500 text-sm mt-2">
-          Please sign {state} continue
+          Please  {state} and continue
         </p>
         {state !== "login" && (
           <div className="flex items-center mt-6 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#6B7280"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-user-round-icon lucide-user-round"
-            >
-              <circle cx="12" cy="8" r="5" />
-              <path d="M20 21a8 8 0 0 0-16 0" />
-            </svg>
+            <User2Icon size={17} color="#66BB6A"  />
             <input
               type="text"
               name="name"
@@ -58,21 +47,7 @@ const Login = () => {
           </div>
         )}
         <div className="flex items-center w-full mt-4 bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#6B7280"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-mail-icon lucide-mail"
-          >
-            <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" />
-            <rect x="2" y="4" width="20" height="16" rx="2" />
-          </svg>
+         <Mail size={17} color="#66BB6A" />
           <input
             type="email"
             name="email"
@@ -84,21 +59,8 @@ const Login = () => {
           />
         </div>
         <div className="flex items-center mt-4 w-full bg-white border border-gray-300/80 h-12 rounded-full overflow-hidden pl-6 gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#6B7280"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-lock-icon lucide-lock"
-          >
-            <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
+         <LockOpenIcon size={17} color="#66BB6A"  />
+          
           <input
             type="password"
             name="password"
@@ -109,14 +71,14 @@ const Login = () => {
             required
           />
         </div>
-        <div className="mt-4 text-left text-indigo-500">
+        <div className="mt-4 text-left text-green-500">
           <button className="text-sm" type="reset">
             Forget password?
           </button>
         </div>
         <button
           type="submit"
-          className="mt-2 w-full h-11 rounded-full text-white bg-indigo-500 hover:opacity-90 transition-opacity"
+          className="mt-2 w-full h-11 rounded-full text-white bg-green-500 hover:opacity-90 transition-opacity"
         >
           {state === "login" ? "Login" : "Sign up"}
         </button>
@@ -129,7 +91,7 @@ const Login = () => {
           {state === "login"
             ? "Don't have an account?"
             : "Already have an account?"}{" "}
-          <a href="#" className="text-indigo-500 hover:underline">
+          <a href="#" className="text-green-500 hover:underline">
             click here
           </a>
         </p>
