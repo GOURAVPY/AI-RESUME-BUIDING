@@ -6,12 +6,14 @@ import { sectuions } from "../constent";
 import Persnolinfoform from "../components/persnolinfoform";
 
 const ResumeBuilder = () => {
-  const { resumeid } = useParams();
+  const { resumeId } = useParams();
+  // console.log(dummyResumeData);
+  // console.log(resumeId);
 
   const [resumeData, setResumeData] = useState({
     _id: "",
     title: "",
-    persona_info: {},
+    personal_info: {},
     professional_summary: "",
     experience: [],
     education: [],
@@ -23,7 +25,7 @@ const ResumeBuilder = () => {
   });
 
   const loadExistingResume = () => {
-    const resume = dummyResumeData.find((resume) => resume._id === resumeid);
+    const resume = dummyResumeData.find((resume) => resume._id === resumeId);
 
     if (resume) {
       setResumeData(resume);
@@ -37,7 +39,7 @@ const ResumeBuilder = () => {
 
   useEffect(() => {
     loadExistingResume();
-  }, [resumeid]);
+  }, [resumeId]);
 
   return (
     <div>
@@ -100,24 +102,27 @@ const ResumeBuilder = () => {
 
               {/* form content */}
               <div className=" space-y-6">
-               {activeSection?.id === "personal" && (
-  <Persnolinfoform
-    data={resumeData.persona_info || {}}
-    onChange={(data) => {
-      setResumeData((prev) => ({
-        ...prev,
-        persona_info: data,
-      }));
-    }}
-    removrBackground={removeBackground}
-    setremovrBackground={setRemoveBackground}
-  />
-)}
+                {activeSection?.id === "personal" && (
+                  <Persnolinfoform
+                    data={resumeData.personal_info || {}}
+                    onChange={(data) => {
+                      setResumeData((prev) => ({
+                        ...prev,
+                        personal_info: data,
+                      }));
+                    }}
+                    removrBackground={removeBackground}
+                    setremovrBackground={setRemoveBackground}
+                  />
+                )}
               </div>
             </div>
           </div>
           {/* Right Panel */}
-          <div></div>
+          <div className=" lg:col-span-7 max-1g:mt-6">
+            <div>{/* btn */}</div>
+            
+          </div>
         </div>
       </div>
     </div>
