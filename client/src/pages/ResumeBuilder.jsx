@@ -4,11 +4,12 @@ import { ArrowLeftIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { dummyResumeData } from "../assets/assets";
 import { sectuions } from "../constent";
 import Persnolinfoform from "../components/persnolinfoform";
+import Preview from "../components/Preview";
+import TeamplateSelector from "../components/TeamplateSelector";
+import ColorPicker from "../components/ColorPIcker"; // ✅ fixed name
 
 const ResumeBuilder = () => {
   const { resumeId } = useParams();
-  // console.log(dummyResumeData);
-  // console.log(resumeId);
 
   const [resumeData, setResumeData] = useState({
     _id: "",
@@ -20,22 +21,25 @@ const ResumeBuilder = () => {
     project: [],
     skills: [],
     template: "classic",
-    accent_color: "#3b82f6",
+    accent_color: "#3b82f6", // ✅ default color
     public: false,
   });
 
+  const [activeSectionIndex, setActiveSectionIndex] = useState(0);
+  const [removeBackground, setRemoveBackground] = useState(false);
+
+  const activeSection = sectuions[activeSectionIndex];
+
   const loadExistingResume = () => {
-    const resume = dummyResumeData.find((resume) => resume._id === resumeId);
+    const resume = dummyResumeData.find(
+      (resume) => resume._id === resumeId
+    );
 
     if (resume) {
       setResumeData(resume);
       document.title = resume.title;
     }
   };
-  const [activeSectionIndex, setActiveSectionIndex] = useState(0);
-  const [removeBackground, setRemoveBackground] = useState(false);
-
-  const activeSection = sectuions[activeSectionIndex];
 
   useEffect(() => {
     loadExistingResume();
@@ -43,6 +47,7 @@ const ResumeBuilder = () => {
 
   return (
     <div>
+      {/* Top Back Button */}
       <div className="max-w-7xl mx-auto px-4 py-6">
         <Link
           to="/app"
@@ -53,76 +58,120 @@ const ResumeBuilder = () => {
         </Link>
       </div>
 
-      <div className=" max-w-7xl mx-auto px-4 pb-8">
-        <div className=" grid lg:grid-cols-12 gap-8">
-          {/* left Panel */}
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <div className="grid lg:grid-cols-12 gap-8">
+
+          {/* LEFT PANEL */}
           <div className="relative lg:col-span-5 rounded-lg overflow-hidden">
-            <div className=" bg-white rounded-lg shadow-sm border border-gray-200 p-6 pt-1">
-              {/* progressbar */}
-              <hr className="absolute top-0 left-0 right-0 border-2 border-gray-200 " />
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 pt-1">
+
+              {/* Progress Bar */}
+              <hr className="absolute top-0 left-0 right-0 border-2 border-gray-200" />
               <hr
-                className=" absolute top-0 left-0 bg-gradient-to-r form-gren-500 to-gren-600 border-none transition-all duration-1000 "
+                className="absolute top-0 left-0 bg-gradient-to-r from-green-500 to-green-600 border-none transition-all duration-500"
                 style={{
-                  width: `${(activeSectionIndex * 100) / (sectuions.length - 1)}%`,
+                  width: `${
+                    (activeSectionIndex * 100) / (sectuions.length - 1)
+                  }%`,
                 }}
               />
-              {/* NAVGATION SECTION */}
-              <div className=" flex  justify-between items-center mb-6 border-b border-gray-300 py-1">
-                <div></div>
-                <div className=" flex items-center">
+
+              {/* NAVIGATION */}
+              <div className="flex justify-between items-center mb-6 border-b border-gray-300 py-1">
+                
+                <div className="flex items-center gap-2">
+                  
+                  <TeamplateSelector
+                    selectedTemplate={resumeData.template}
+                    onChange={(template) =>
+                      setResumeData((prev) => ({
+                        ...prev,
+                        template,
+                      }))
+                    }
+                  />
+
+                  {/* ✅ FIXED COLOR PICKER */}
+                  <ColorPicker
+                    selectedColor={resumeData.accent_color}
+                    onChange={(color) =>
+                      setResumeData((prev) => ({
+                        ...prev,
+                        accent_color: color,
+                      }))
+                    }
+                  />
+
+                </div>
+
+                {/* Navigation Buttons */}
+                <div className="flex items-center">
+                  
                   {activeSectionIndex !== 0 && (
                     <button
                       onClick={() =>
-                        setActiveSectionIndex((PREINX) =>
-                          Math.max(PREINX - 1, 0),
+                        setActiveSectionIndex((prev) =>
+                          Math.max(prev - 1, 0)
                         )
                       }
-                      className=" flex items-center gap-1 p-3 rounded-lg text-sm
-                       font-medium text-gray-600 hover:bg-gray-50 transition-all"
-                      disabled={activeSectionIndex === 0}
+                      className="flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50"
                     >
-                      <ChevronLeft className=" size-4 " /> Previous
+                      <ChevronLeft className="size-4" />
+                      Previous
                     </button>
                   )}
+
                   <button
                     onClick={() =>
-                      setActiveSectionIndex((PREINX) =>
-                        Math.max(PREINX + 1, sectuions.length - 1),
+                      setActiveSectionIndex((prev) =>
+                        Math.min(prev + 1, sectuions.length - 1)
                       )
                     }
-                    className={`flex items-center gap-1 p-3 rounded-lg text-sm
-                       font-medium text-gray-600 hover:bg-gray-50 transition-all 
-                       ${activeSectionIndex === sectuions.length - 1 && "opacity-50"}`}
-                    disabled={activeSectionIndex === 0}
+                    className={`flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 ${
+                      activeSectionIndex === sectuions.length - 1
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
+                    }`}
+                    disabled={
+                      activeSectionIndex === sectuions.length - 1
+                    }
                   >
-                    Next <ChevronRight className=" size-4 " />
+                    Next
+                    <ChevronRight className="size-4" />
                   </button>
+
                 </div>
               </div>
 
-              {/* form content */}
-              <div className=" space-y-6">
+              {/* FORM SECTION */}
+              <div className="space-y-6">
                 {activeSection?.id === "personal" && (
                   <Persnolinfoform
                     data={resumeData.personal_info || {}}
-                    onChange={(data) => {
+                    onChange={(data) =>
                       setResumeData((prev) => ({
                         ...prev,
                         personal_info: data,
-                      }));
-                    }}
+                      }))
+                    }
                     removrBackground={removeBackground}
                     setremovrBackground={setRemoveBackground}
                   />
                 )}
               </div>
+
             </div>
           </div>
-          {/* Right Panel */}
-          <div className=" lg:col-span-7 max-1g:mt-6">
-            <div>{/* btn */}</div>
-            
+
+          {/* RIGHT PANEL */}
+          <div className="lg:col-span-7 max-lg:mt-6">
+            <Preview
+              data={resumeData}
+              template={resumeData.template}
+              accentColor={resumeData.accent_color} 
+            />
           </div>
+
         </div>
       </div>
     </div>
