@@ -31,9 +31,7 @@ const ResumeBuilder = () => {
   const activeSection = sectuions[activeSectionIndex];
 
   const loadExistingResume = () => {
-    const resume = dummyResumeData.find(
-      (resume) => resume._id === resumeId
-    );
+    const resume = dummyResumeData.find((resume) => resume._id === resumeId);
 
     if (resume) {
       setResumeData(resume);
@@ -60,27 +58,26 @@ const ResumeBuilder = () => {
 
       <div className="max-w-7xl mx-auto px-4 pb-8">
         <div className="grid lg:grid-cols-12 gap-8">
-
           {/* LEFT PANEL */}
           <div className="relative lg:col-span-5 rounded-lg overflow-hidden">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 pt-1">
-
               {/* Progress Bar */}
-              <hr className="absolute top-0 left-0 right-0 border-2 border-gray-200" />
+              <hr className="absolute top-0 left-0 right-0 h-[3px] bg-gray-200 border-none" />
+
               <hr
-                className="absolute top-0 left-0 bg-gradient-to-r from-green-500 to-green-600 border-none transition-all duration-500"
+                className="absolute top-0 left-0 h-[3px] bg-gradient-to-r from-green-500 to-green-600 transition-all duration-500"
                 style={{
                   width: `${
-                    (activeSectionIndex * 100) / (sectuions.length - 1)
+                    sectuions.length > 1
+                      ? (activeSectionIndex / (sectuions.length - 1)) * 100
+                      : 0
                   }%`,
                 }}
               />
 
               {/* NAVIGATION */}
               <div className="flex justify-between items-center mb-6 border-b border-gray-300 py-1">
-                
                 <div className="flex items-center gap-2">
-                  
                   <TeamplateSelector
                     selectedTemplate={resumeData.template}
                     onChange={(template) =>
@@ -101,18 +98,14 @@ const ResumeBuilder = () => {
                       }))
                     }
                   />
-
                 </div>
 
                 {/* Navigation Buttons */}
                 <div className="flex items-center">
-                  
                   {activeSectionIndex !== 0 && (
                     <button
                       onClick={() =>
-                        setActiveSectionIndex((prev) =>
-                          Math.max(prev - 1, 0)
-                        )
+                        setActiveSectionIndex((prev) => Math.max(prev - 1, 0))
                       }
                       className="flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50"
                     >
@@ -124,7 +117,7 @@ const ResumeBuilder = () => {
                   <button
                     onClick={() =>
                       setActiveSectionIndex((prev) =>
-                        Math.min(prev + 1, sectuions.length - 1)
+                        Math.min(prev + 1, sectuions.length - 1),
                       )
                     }
                     className={`flex items-center gap-1 p-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 ${
@@ -132,14 +125,11 @@ const ResumeBuilder = () => {
                         ? "opacity-50 cursor-not-allowed"
                         : ""
                     }`}
-                    disabled={
-                      activeSectionIndex === sectuions.length - 1
-                    }
+                    disabled={activeSectionIndex === sectuions.length - 1}
                   >
                     Next
                     <ChevronRight className="size-4" />
                   </button>
-
                 </div>
               </div>
 
@@ -159,7 +149,6 @@ const ResumeBuilder = () => {
                   />
                 )}
               </div>
-
             </div>
           </div>
 
@@ -168,10 +157,9 @@ const ResumeBuilder = () => {
             <Preview
               data={resumeData}
               template={resumeData.template}
-              accentColor={resumeData.accent_color} 
+              accentColor={resumeData.accent_color}
             />
           </div>
-
         </div>
       </div>
     </div>
