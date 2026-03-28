@@ -51,4 +51,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 GOURAV
 
-Project Link: [https://github.com/username/ai-resume-buildr](https://github.com/username/ai-resume-buildr)
+Project Link: [https://github.com/username/ai-resume-buildr](git@github.com:GOURAVPY/AI-RESUME-BUIDING.git)
