@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { data, Link, useParams } from "react-router-dom";
 import { ArrowLeftIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { dummyResumeData } from "../assets/assets";
 import { sectuions } from "../constent";
@@ -7,6 +7,8 @@ import Persnolinfoform from "../components/persnolinfoform";
 import Preview from "../components/Preview";
 import TeamplateSelector from "../components/TeamplateSelector";
 import ColorPicker from "../components/ColorPIcker"; // ✅ fixed name
+import SummaryForm from "../components/SummaryForm";
+import ExperienceForm from "../components/ExperienceForm";
 
 const ResumeBuilder = () => {
   const { resumeId } = useParams();
@@ -146,6 +148,29 @@ const ResumeBuilder = () => {
                     }
                     removrBackground={removeBackground}
                     setremovrBackground={setRemoveBackground}
+                  />
+                )}
+                {activeSection?.id === "summary" && (
+                  <SummaryForm
+                    data={resumeData.professional_summary}
+                    onChange={(data) =>
+                      setResumeData((prev) => ({
+                        ...prev,
+                        professional_summary: data,
+                      }))
+                    }
+                    setResumeData={setResumeData}
+                  />
+                )}
+                {activeSection?.id === "experience" && (
+                  <ExperienceForm
+                    data={resumeData.experience}
+                    onChange={(data) =>
+                      setResumeData((prev) => ({
+                        ...prev,
+                        experience: data,
+                      }))
+                    }
                   />
                 )}
               </div>

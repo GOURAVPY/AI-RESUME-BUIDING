@@ -69,3 +69,12 @@ export const fields = [
     type: "url",
   },
 ];
+
+export const newExperience = {
+  company: "",
+  position: "",
+  start_date: "",
+  end_date: "",
+  description: "",
+  is_current: false,
+};
