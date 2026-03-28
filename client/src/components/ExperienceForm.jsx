@@ -50,6 +50,7 @@ const ExperienceForm = ({ data = [], onChange }) => {
       ) : (
         <div className="space-y-4">
           {data.map((experience, index) => (
+            
             <div
               key={index}
               className="p-4 border border-gray-200 rounded-lg space-y-3"
