@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { data, Link, useParams } from "react-router-dom";
-import { ArrowLeftIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  EyeOff,
+  FileDown,
+  Share2,
+} from "lucide-react";
 import { dummyResumeData } from "../assets/assets";
 import { sectuions } from "../constent";
 import Persnolinfoform from "../components/persnolinfoform";
@@ -10,6 +18,8 @@ import ColorPicker from "../components/ColorPIcker"; // ✅ fixed name
 import SummaryForm from "../components/SummaryForm";
 import ExperienceForm from "../components/ExperienceForm";
 import EducationForm from "../components/EductionForm";
+import ProjectForm from "../components/ProjectForm";
+import SkillsForm from "../components/SkillsForm";
 
 const ResumeBuilder = () => {
   const { resumeId } = useParams();
@@ -45,6 +55,20 @@ const ResumeBuilder = () => {
   useEffect(() => {
     loadExistingResume();
   }, [resumeId]);
+
+  const changeResumeVisibill = async () => {
+    setResumeData({...resumeData ,public: !resumeData.public})
+  }
+   const handleshare = () => {
+    const frontendUrl = window.location.href.split('/app/')[0];
+    const resumeUrl = frontendUrl + '/view/' + resumeId
+    if (navigator.share) {
+      navigator.share({url : resumeUrl ,  text: "My Resume" , })
+    }else alert('share not supported on this browser')
+   }
+   const downloadResume = () =>{
+    window.print();
+   }
 
   return (
     <div>
@@ -185,12 +209,59 @@ const ResumeBuilder = () => {
                     }
                   />
                 )}
+                {activeSection?.id === "project" && (
+                  <ProjectForm
+                    data={resumeData.project}
+                    onChange={(data) =>
+                      setResumeData((prev) => ({
+                        ...prev,
+                        project: data,
+                      }))
+                    }
+                  />
+                )}
+                {activeSection?.id === "skills" && (
+                  <SkillsForm
+                    data={resumeData.skills}
+                    onChange={(data) =>
+                      setResumeData((prev) => ({
+                        ...prev,
+                        skills: data,
+                      }))
+                    }
+                  />
+                )}
               </div>
+              <button className="mt-6 px-6 py-2  bg-gradient-to-br from-emerald-50 to-emerald-100 text-green-600 text-sm ring hover:ring-green-400 rounded-md transition-all ">
+                Save Changes
+              </button>
             </div>
           </div>
 
           {/* RIGHT PANEL */}
           <div className="lg:col-span-7 max-lg:mt-6">
+            <div className=" relative w-full">
+              <div className=" absolute bottom-3 left-0 gap-2 right-0 flex items-center justify-end">
+                {resumeData.public && (
+                  <button onClick={handleshare} className="flex items-center gap-1 text-sm text-emerald-600 bg-gradient-to-br from-emerald-50 to-emerald-100 hover:ring px-3 py-2 rounded-lg">
+                    <Share2 className="size4" />
+                    Share
+                  </button>
+                )}
+                <button onClick={changeResumeVisibill} className="flex items-center gap-1 text-sm text-blue-600 bg-gradient-to-br from-blue-50 to-blue-100 hover:ring px-3 py-2 rounded-lg">
+                  {resumeData.public ? (
+                    <Eye className="size-4" />
+                  ) : (
+                    <EyeOff className="size-4" />
+                  )}
+                  {resumeData.public ? "Public" : " private "}
+                </button>
+                <button onClick={downloadResume} className="flex items-center gap-1 text-sm text-purple-600 bg-gradient-to-br from-purple-50 to-purple-100 hover:ring px-3 py-2 rounded-lg">
+                  <FileDown className="size-4" />
+                  Download
+                </button>
+              </div>
+            </div>
             <Preview
               data={resumeData}
               template={resumeData.template}

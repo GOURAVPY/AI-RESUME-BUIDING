@@ -20,7 +20,8 @@ export const sectuions = [
   { id: "experience", name: "Experience info", icon: Briefcase },
   { id: "education", name: "Education info", icon: GraduationCap },
   { id: "project", name: "Project info", icon: FolderCode },
-  { id: "skils", name: "Skils info", icon: Sparkles },
+  { id: "skills", name: "Skills info", icon: Sparkles },
+
 ];
 
 export const fields = [
@@ -87,9 +88,7 @@ export const newEducation = {
 };
 
 export const newProject = {
-  title: "",
-  tech_stack: "",
-  live_link: "",
-  github_link: "",
+  name: "",
+  type: "",
   description: "",
 };
