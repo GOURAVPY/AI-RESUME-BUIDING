@@ -78,3 +78,18 @@ export const newExperience = {
   description: "",
   is_current: false,
 };
+export const newEducation = {
+  institution: "",
+  degree: "",
+  field: "",
+  graduation_date: "",
+  gpa: "",
+};
+
+export const newProject = {
+  title: "",
+  tech_stack: "",
+  live_link: "",
+  github_link: "",
+  description: "",
+};

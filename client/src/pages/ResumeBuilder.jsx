@@ -9,6 +9,7 @@ import TeamplateSelector from "../components/TeamplateSelector";
 import ColorPicker from "../components/ColorPIcker"; // ✅ fixed name
 import SummaryForm from "../components/SummaryForm";
 import ExperienceForm from "../components/ExperienceForm";
+import EducationForm from "../components/EductionForm";
 
 const ResumeBuilder = () => {
   const { resumeId } = useParams();
@@ -169,6 +170,17 @@ const ResumeBuilder = () => {
                       setResumeData((prev) => ({
                         ...prev,
                         experience: data,
+                      }))
+                    }
+                  />
+                )}
+                {activeSection?.id === "education" && (
+                  <EducationForm
+                    data={resumeData.education}
+                    onChange={(data) =>
+                      setResumeData((prev) => ({
+                        ...prev,
+                        education: data,
                       }))
                     }
                   />

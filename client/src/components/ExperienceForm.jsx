@@ -27,9 +27,7 @@ const ExperienceForm = ({ data = [], onChange }) => {
           <h3 className="text-lg font-semibold text-gray-900">
             Professional Experience
           </h3>
-          <p className="text-sm text-gray-500">
-            Add your job experience
-          </p>
+          <p className="text-sm text-gray-500">Add your job experience</p>
         </div>
 
         <button
@@ -50,7 +48,6 @@ const ExperienceForm = ({ data = [], onChange }) => {
       ) : (
         <div className="space-y-4">
           {data.map((experience, index) => (
-            
             <div
               key={index}
               className="p-4 border border-gray-200 rounded-lg space-y-3"
@@ -126,9 +123,10 @@ const ExperienceForm = ({ data = [], onChange }) => {
                   <label className="text-sm font-medium text-gray-700">
                     Job Description
                   </label>
-                  <button 
-                  className="flex items-center gap-1 text-sm text-rose-600 bg-gradient-to-br from-rose-50 to-rose-100 hover:ring px-3 py-2 rounded-lg"
-                  type="button">
+                  <button
+                    className="flex items-center gap-1 text-sm text-rose-600 bg-gradient-to-br from-rose-50 to-rose-100 hover:ring px-3 py-2 rounded-lg"
+                    type="button"
+                  >
                     <Sparkles className="w-3 h-3" />
                     Enhance with AI
                   </button>
