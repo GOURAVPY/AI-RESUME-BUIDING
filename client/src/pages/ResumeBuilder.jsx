@@ -12,7 +12,7 @@ import {
 import { dummyResumeData } from "../assets/assets";
 import { sectuions } from "../constent";
 import Persnolinfoform from "../components/persnolinfoform";
-import Preview from "../components/Preview";
+import ResumePreview from "../components/ResumePreview";
 import TeamplateSelector from "../components/TeamplateSelector";
 import ColorPicker from "../components/ColorPIcker"; // ✅ fixed name
 import SummaryForm from "../components/SummaryForm";
@@ -57,18 +57,18 @@ const ResumeBuilder = () => {
   }, [resumeId]);
 
   const changeResumeVisibill = async () => {
-    setResumeData({...resumeData ,public: !resumeData.public})
-  }
-   const handleshare = () => {
-    const frontendUrl = window.location.href.split('/app/')[0];
-    const resumeUrl = frontendUrl + '/view/' + resumeId
+    setResumeData({ ...resumeData, public: !resumeData.public });
+  };
+  const handleshare = () => {
+    const frontendUrl = window.location.href.split("/app/")[0];
+    const resumeUrl = frontendUrl + "/view/" + resumeId;
     if (navigator.share) {
-      navigator.share({url : resumeUrl ,  text: "My Resume" , })
-    }else alert('share not supported on this browser')
-   }
-   const downloadResume = () =>{
+      navigator.share({ url: resumeUrl, text: "My Resume" });
+    } else alert("share not supported on this browser");
+  };
+  const downloadResume = () => {
     window.print();
-   }
+  };
 
   return (
     <div>
@@ -243,12 +243,18 @@ const ResumeBuilder = () => {
             <div className=" relative w-full">
               <div className=" absolute bottom-3 left-0 gap-2 right-0 flex items-center justify-end">
                 {resumeData.public && (
-                  <button onClick={handleshare} className="flex items-center gap-1 text-sm text-emerald-600 bg-gradient-to-br from-emerald-50 to-emerald-100 hover:ring px-3 py-2 rounded-lg">
+                  <button
+                    onClick={handleshare}
+                    className="flex items-center gap-1 text-sm text-emerald-600 bg-gradient-to-br from-emerald-50 to-emerald-100 hover:ring px-3 py-2 rounded-lg"
+                  >
                     <Share2 className="size4" />
                     Share
                   </button>
                 )}
-                <button onClick={changeResumeVisibill} className="flex items-center gap-1 text-sm text-blue-600 bg-gradient-to-br from-blue-50 to-blue-100 hover:ring px-3 py-2 rounded-lg">
+                <button
+                  onClick={changeResumeVisibill}
+                  className="flex items-center gap-1 text-sm text-blue-600 bg-gradient-to-br from-blue-50 to-blue-100 hover:ring px-3 py-2 rounded-lg"
+                >
                   {resumeData.public ? (
                     <Eye className="size-4" />
                   ) : (
@@ -256,13 +262,16 @@ const ResumeBuilder = () => {
                   )}
                   {resumeData.public ? "Public" : " private "}
                 </button>
-                <button onClick={downloadResume} className="flex items-center gap-1 text-sm text-purple-600 bg-gradient-to-br from-purple-50 to-purple-100 hover:ring px-3 py-2 rounded-lg">
+                <button
+                  onClick={downloadResume}
+                  className="flex items-center gap-1 text-sm text-purple-600 bg-gradient-to-br from-purple-50 to-purple-100 hover:ring px-3 py-2 rounded-lg"
+                >
                   <FileDown className="size-4" />
                   Download
                 </button>
               </div>
             </div>
-            <Preview
+            <ResumePreview
               data={resumeData}
               template={resumeData.template}
               accentColor={resumeData.accent_color}

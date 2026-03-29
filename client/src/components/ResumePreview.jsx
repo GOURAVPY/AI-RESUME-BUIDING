@@ -5,7 +5,7 @@ import {
   ModernTemplate,
 } from "../assets/templates/index";
 
-const Preview = ({ data, template, accentColor, classes = "" }) => {
+const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
   const renderTemplate = () => {
     switch (template) {
       case "modern":
@@ -79,4 +79,4 @@ const Preview = ({ data, template, accentColor, classes = "" }) => {
   );
 };
 
-export default Preview;
+export default ResumePreview ;
