@@ -1,1 +1,1 @@
-export const store = con
+export const store = congi
