@@ -1,10 +1,14 @@
 import React from "react";
 
-const Loader = ({ text = "Loading..." }) => {
+const Loader = () => {
   return (
-    <div className="flex flex-col items-center justify-center py-12">
-      <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mb-3"></div>
-      <p className="text-sm text-gray-500">{text}</p>
+    <div className="loader-wrapper">
+      <div className="loader">
+        <div className="box box1"></div>
+        <div className="box box2"></div>
+        <div className="box box3"></div>
+        
+      </div>
     </div>
   );
 };
