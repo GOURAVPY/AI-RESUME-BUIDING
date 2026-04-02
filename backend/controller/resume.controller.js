@@ -32,21 +32,31 @@ export const createResume = async (req, res) => {
 // DELETE: /api/resume/:id
 export const deleteResume = async (req, res) => {
   try {
-    const resumeId = req.params;
+    const { resumeId } = req.params;
 
-    // 🔐 logged-in user
-    const userId = req.user._id;
+    if (!resumeId) {
+      return res.status(400).json({
+        message: "Resume ID is required",
+      });
+    }
 
-    // 🔍 find resume
+    const deleted = await Resume.findByIdAndDelete(resumeId);
 
-    await resume.findOneAndDelete({ userId, _id: resumeId });
+    if (!deleted) {
+      return res.status(404).json({
+        message: "Resume not found",
+      });
+    }
 
-    return res.status(200).json({
+    res.status(200).json({
       message: "Resume deleted successfully",
     });
+
   } catch (error) {
-    console.error("Delete Resume Error:", error.message);
-    return res.status(500).json({ message: "Server error" });
+    console.log("DELETE ERROR:", error); // 👈 VERY IMPORTANT
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 

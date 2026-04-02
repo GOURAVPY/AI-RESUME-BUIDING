@@ -12,15 +12,16 @@
 
   /* ✅ Apply to all inputs */
   input {
-    @apply outline-none border border-gray-300 rounded-lg 
-    focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-3 py-2;
+    @apply outline-none rounded-lg px-3 py-2;
   }
 
   textarea {
-    @apply outline-none border border-gray-300 rounded-lg 
-    focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none px-3 py-2;
+    @apply outline-none border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none px-3 py-2;
   }
 }
+
+
+
 
 .loader-wrapper {
   height: 100vh;
@@ -33,7 +34,8 @@
 .loader {
   width: 112px;
   height: 112px;
-  position: relative; /* REQUIRED */
+  position: relative;
+  /* REQUIRED */
 }
 
 .box1,

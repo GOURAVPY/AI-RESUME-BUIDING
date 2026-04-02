@@ -9,36 +9,125 @@ import {
   UploadIcon,
   XIcon,
 } from "lucide-react";
-import { dummyResumeData } from "../assets/assets";
+import { useSelector } from "react-redux";
+import endPoint from "../configs/api";
+import { toast } from "react-toastify";
+import Loader from "../components/Loader";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";  
+
 
 const Dashboard = () => {
-  const colors = ["#9333ea", "#d97706", "#dc2626", "#0284c7", "#16a34a"];
+  const { user, token } = useSelector((state) => state.auth);
 
+  const colors = ["#9333ea", "#d97706", "#dc2626", "#0284c7", "#16a34a"];
   const [allresumes, setAllResumes] = useState([]);
   const [showCreateResume, setShowCreateResume] = useState(false);
   const [showUploadResume, setShowUploadResume] = useState(false);
   const [title, setTitel] = useState("");
   const [resume, setResume] = useState(null);
   const [editresumeid, setEditResumeId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   const navigate = useNavigate();
 
+  const pdfToText = async (file) => {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+    let text = "";
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map((item) => item.str).join(" ");
+    }
+    return text;
+  };
+
   const loadAllResumes = async () => {
-    setAllResumes(dummyResumeData);
+    try {
+      setIsLoading(true);
+
+      const { data } = await endPoint.get(
+        "/api/user/resume", // ✅ fixed path
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      setAllResumes(data?.resumes || []); // ✅ fixed key
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const createResume = async (eve) => {
-  eve.preventDefault();
-  setShowCreateResume(false);
-  setTitel("");   // add this
-  navigate(`/app/builder/res123`);
-};
+    try {
+      eve.preventDefault();
 
-  const uploadResume = async (eve) => {
-    eve.preventDefault();
-    setShowUploadResume(false);
-    navigate(`/app/builder/res123`);
+      const { data } = await endPoint.post(
+        "/api/resumes/create", // matches backend
+        { title },
+        { headers: { Authorization: `Bearer ${token}` } }, // token must be Bearer if your backend expects it
+      );
+
+      setAllResumes([...allresumes, data.resume]);
+      setTitel("");
+      setShowCreateResume(false);
+      navigate(`/app/builder/${data.resume._id}`);
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err.message);
+    }
   };
+
+  const uploadResume = async (e) => {
+    e.preventDefault();
+
+    if (!resume) {
+      toast.error("Please select a PDF file");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      // Extract text from PDF
+      const resumeText = await pdfToText(resume);
+      console.log(resumeText, "error");
+
+      // Send to backend
+      const { data } = await endPoint.post(
+        "/api/ai/enhance/uplode-resume",
+        { title, resumeText },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      // Reset states after upload
+      setResume(null);
+      setTitel("");
+      setShowUploadResume(false);
+
+      // Navigate to builder page
+      navigate(`/app/builder/${data.resumeId}`);
+
+      toast.success("Resume uploaded successfully!");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const editResume = (e) => {
     e.preventDefault();
 
@@ -49,12 +138,30 @@ const Dashboard = () => {
     setEditResumeId("");
     setTitel("");
   };
-  const deleteResume = async (resumeid) => {
-    const confirm = window.confirm(
-      "ARE YOU SURE YOU WANT TO DELETE THIS RESUME ?...",
-    );
-    if (confirm) {
-      setAllResumes((prev) => prev.filter((resume) => resume._id !== resumeid));
+
+  const deleteResume = async () => {
+    try {
+      setDeletingId(selectedId); // animation trigger
+
+      await endPoint.delete(`/api/resumes/delete/${selectedId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setTimeout(() => {
+        setAllResumes((prev) =>
+          prev.filter((resume) => resume._id !== selectedId),
+        );
+        setDeletingId(null);
+      }, 300);
+
+      toast.success("Resume deleted");
+    } catch (error) {
+      toast.error(error?.response?.data?.message || error.message);
+    } finally {
+      setShowDeleteModal(false);
+      setSelectedId(null);
     }
   };
 
@@ -100,14 +207,17 @@ const Dashboard = () => {
 
         {/* Resume List */}
         <div className="grid grid-cols-2 sm:flex flex-wrap gap-4">
-          {allresumes.map((resume, index) => {
+          {allresumes?.map((resume, index) => {
             const basecolor = colors[index % colors.length];
 
             return (
               <button
                 key={index}
                 onClick={() => navigate(`/app/builder/${resume._id}`)}
-                className="relative w-full sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 border group hover:shadow-lg transition-all duration-300 cursor-pointer"
+                className={`group relative w-full sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 border hover:shadow-lg transition-all duration-300 cursor-pointer
+    ${
+      deletingId === resume._id ? "opacity-0 scale-90" : "opacity-100 scale-100"
+    }`}
                 style={{
                   background: `linear-gradient(135deg, ${basecolor}10, ${basecolor}40)`,
                   borderColor: basecolor + "40",
@@ -139,7 +249,10 @@ const Dashboard = () => {
                   className="absolute top-1 right-1 hidden group-hover:flex items-center"
                 >
                   <TrashIcon
-                    onClick={() => deleteResume(resume._id)}
+                    onClick={() => {
+                      setSelectedId(resume._id);
+                      setShowDeleteModal(true);
+                    }}
                     className="size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors"
                   />
                   <PencilIcon
@@ -243,8 +356,15 @@ const Dashboard = () => {
                   onChange={(e) => setResume(e.target.files[0])}
                 />
               </div>
-              <button className=" w-full py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors">
-                Upload Resume
+              <button
+                type="submit"
+                className={`w-full py-2 rounded transition-colors flex items-center justify-center gap-2 ${isLoading ? "bg-purple-400 cursor-not-allowed" : "bg-purple-600 hover:bg-purple-700 text-white"}`}
+                disabled={isLoading}
+              >
+                {isLoading && "Wait"}
+                <span className="text-sm">
+                  {isLoading ? "Uploading..." : "Upload Resume"}
+                </span>
               </button>
               <XIcon
                 className=" absolute top-4 right-4 text-slate-400 hover:text-purple-600 cursor-pointer transition-colors"
@@ -292,6 +412,34 @@ const Dashboard = () => {
               />
             </div>
           </form>
+        )}
+
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-[320px] shadow-xl text-center">
+              <h2 className="text-lg font-semibold mb-3">Delete Resume?</h2>
+
+              <p className="text-sm text-gray-600 mb-5">
+                This action cannot be undone.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="w-full py-2 border rounded"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={deleteResume}
+                  className="w-full py-2 bg-red-600 text-white rounded"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

@@ -1,7 +1,12 @@
 import React from "react";
 import { LockOpenIcon, Mail, User2Icon } from "lucide-react";
+import endPoint from "../configs/api";
+import { useDispatch } from "react-redux";
+import { login } from "../app/features/authSlice";
+import toast from "react-hot-toast";
 
 const Login = () => {
+  const dispatch = useDispatch();
   const query = new URLSearchParams(window.location.search);
   const urlstate = query.get("state");
   const [state, setState] = React.useState(urlstate || "login");
@@ -14,7 +19,19 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // handle login/signup logic
+    try {
+      const { data } = await endPoint.post(`/api/user/${state}`, formData);
+
+      // ✅ Save user + token
+      dispatch(login(data));
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      toast.success(data.message);
+    } catch (error) {
+      console.log(error); // 🔍 debug
+      toast.error(error?.response?.data?.message || error.message);
+    }
   };
 
   const handleChange = (e) => {
