@@ -13,8 +13,7 @@ import { useSelector } from "react-redux";
 import endPoint from "../configs/api";
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";  
-
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 
 const Dashboard = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -128,16 +127,48 @@ const Dashboard = () => {
     }
   };
 
-  const editResume = (e) => {
-    e.preventDefault();
+  const editResume = async (e) => {
+  e.preventDefault();
 
-    setAllResumes((prev) =>
-      prev.map((r) => (r._id === editresumeid ? { ...r, title } : r)),
+  try {
+    toast.info("Updating resume...", { autoClose: 1000 });
+
+    // ✅ Send resumeData as a JSON string if your backend expects JSON.parse
+   const { data } = await endPoint.put(
+  `/api/resumes/update`,
+  { 
+    resumeId: editresumeid, 
+    resumeData: JSON.stringify({ title }) 
+  },
+  { 
+    headers: { Authorization: `Bearer ${token}` } // <-- add "Bearer "
+  }
+  
+);
+console.log(token ,'token');
+
+    // Update local state
+    setAllResumes(
+      allresumes.map(resume =>
+        resume?._id === editresumeid ? { ...resume, title } : resume
+      )
     );
 
+    setTitel("");        // reset input
     setEditResumeId("");
-    setTitel("");
-  };
+
+    toast.success(data.message, {
+      style: { background: "#4caf50", color: "#fff", fontWeight: "bold" },
+      icon: "✅"
+    });
+
+  } catch (error) {
+    toast.error(error?.response?.data?.message || error.message, {
+      style: { background: "#f44336", color: "#fff", fontWeight: "bold" },
+      icon: "⚠️"
+    });
+  }
+};
 
   const deleteResume = async () => {
     try {
@@ -433,7 +464,7 @@ const Dashboard = () => {
 
                 <button
                   onClick={deleteResume}
-                  className="w-full py-2 bg-red-600 text-white rounded"
+                  className="w-full py-2 bg-green-600 text-white rounded"
                 >
                   Delete
                 </button>

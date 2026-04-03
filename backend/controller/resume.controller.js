@@ -113,12 +113,23 @@ export const getPublicResumeById = async (req, res) => {
 
 export const updateResume = async (req, res) => {
   try {
-    const userId = req.userId;
-    const { resumeId, resumeData, removebackground } = req.bady;
+    const userId = req.user._id;
+    const { resumeId, resumeData, removebackground } = req.body;
     const image = req.file;
 
-    let resumeDataCopy = JSON.parse(resumeData);
+    // 🛑 prevent crash
+    if (!resumeId) {
+      return res.status(400).json({ message: "Resume ID missing" });
+    }
 
+    let resumeDataCopy;
+    try {
+      resumeDataCopy = JSON.parse(resumeData);
+    } catch {
+      return res.status(400).json({ message: "Invalid resumeData JSON" });
+    }
+
+    // ✅ handle image safely
     if (image) {
       const imageBufferData = fs.createReadStream(image.path);
 
@@ -128,21 +139,33 @@ export const updateResume = async (req, res) => {
         folder: "user_resumes",
         transformation: {
           pre:
-            "w-300 , h-300 , fo-face , z-0.75" +
-            (removebackground ? "e-bgremove" : ""),
-          },
-        });
-        resumeDataCopy.personal_info.image = response.url
+            "w-300,h-300,fo-face,z-0.75" +
+            (removebackground ? ",e-bgremove" : ""),
+        },
+      });
+
+      resumeDataCopy.personal_info =
+        resumeDataCopy.personal_info || {};
+
+      resumeDataCopy.personal_info.image = response.url;
     }
 
-    console.log(response);
-    
+    const updatedResume = await Resume.findOneAndUpdate(
+      { _id: resumeId, userId },
+      resumeDataCopy,
+      { new: true }
+    );
 
-    await Resume.findByIdAndUpdate({ userId, _id: resumeId }, resumeDataCopy, {
-      new: true,
+    if (!updatedResume) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+
+    return res.status(200).json({
+      message: "Resume updated successfully",
+      updatedResume,
     });
-    return;
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Update resume error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 };

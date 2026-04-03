@@ -1,51 +1,107 @@
-import React from 'react'
+import React from 'react';
+import { Sparkles, ShieldCheck, Zap, Cpu, FileCheck, SearchCode } from 'lucide-react';
 
 const Feature = () => {
-  return (
-    <div id='features' >
-            <h1 className="text-3xl font-semibold text-center mx-auto">Powerful Features</h1>
-            <p className="text-sm text-slate-500 text-center mt-2 max-w-md mx-auto">Everything you need to manage, track, and grow your finances, securely and efficiently.</p>
-            
-            <div className="flex items-center justify-center flex-wrap gap-6 mt-20 px-4 md:px-0">
-                <div className="flex flex-col text-center items-center justify-center rounded-xl p-6 border border-violet-200 gap-6 max-w-sm">
-                    <div className="p-6 aspect-square bg-violet-100 rounded-full">
-                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M14 18.667V24.5m4.668-8.167V24.5m4.664-12.833V24.5m2.333-21L15.578 13.587a.584.584 0 0 1-.826 0l-3.84-3.84a.583.583 0 0 0-.825 0L2.332 17.5M4.668 21v3.5m4.664-8.167V24.5" stroke="#7F22FE" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                    </div>
-                    <div className="space-y-2">
-                        <h3 className="text-base font-semibold text-slate-700">Real-Time Analytics</h3>
-                        <p className="text-sm text-slate-600">Get instant insights into your finances with live dashboards.</p>
-                    </div>
-                </div>
-                <div className="flex flex-col text-center items-center justify-center rounded-xl p-6 border border-green-200 gap-6 max-w-sm">
-                    <div className="p-6 aspect-square bg-green-100 rounded-full">
-                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M14 11.667A2.333 2.333 0 0 0 11.667 14c0 1.19-.117 2.929-.304 4.667m4.972-3.36c0 2.776 0 7.443-1.167 10.36m5.004-1.144c.14-.7.502-2.683.583-3.523M2.332 14a11.667 11.667 0 0 1 21-7m-21 11.667h.01m23.092 0c.233-2.333.152-6.246 0-7" stroke="#00A63E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M5.832 22.75C6.415 21 6.999 17.5 6.999 14a7 7 0 0 1 .396-2.333m2.695 13.999c.245-.77.525-1.54.665-2.333m-.255-15.4A7 7 0 0 1 21 14v2.333" stroke="#00A63E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                    </div>
-                    <div className="space-y-2">
-                        <h3 className="text-base font-semibold text-slate-700">Bank-Grade Security</h3>
-                        <p className="text-sm text-slate-600">End-to-end encryption, 2FA, compliance with GDPR standards.</p>
-                    </div>
-                </div>
-                <div className="flex flex-col text-center items-center justify-center rounded-xl p-6 border border-orange-200 gap-6 max-w-sm">
-                    <div className="p-6 aspect-square bg-orange-100 rounded-full">
-                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M4.668 25.666h16.333a2.333 2.333 0 0 0 2.334-2.333V8.166L17.5 2.333H7a2.333 2.333 0 0 0-2.333 2.333v4.667" stroke="#F54900" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                            <path d="M16.332 2.333V7a2.334 2.334 0 0 0 2.333 2.333h4.667m-21 8.167h11.667M10.5 21l3.5-3.5-3.5-3.5" stroke="#F54900" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                    </div>
-                    <div className="space-y-2">
-                        <h3 className="text-base font-semibold text-slate-700">Customizable Reports</h3>
-                        <p className="text-sm text-slate-600">Export professional, audit-ready financial reports for tax or internal review.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-  
-  )
-}
+  const features = [
+    {
+      title: "AI-Powered Optimization",
+      description: "Our neural engine analyzes job descriptions and suggests the exact keywords needed to pass recruiter filters.",
+      icon: <Cpu className="text-violet-600" size={28} />,
+      iconBg: "bg-violet-100",
+      borderColor: "hover:border-violet-300",
+      tag: "Smart Engine"
+    },
+    {
+      title: "99% ATS Pass Rate",
+      description: "Templates engineered specifically for Applicant Tracking Systems, ensuring your resume never gets lost in the 'black hole'.",
+      icon: <ShieldCheck className="text-emerald-600" size={28} />,
+      iconBg: "bg-emerald-100",
+      borderColor: "hover:border-emerald-300",
+      tag: "Recruiter Approved"
+    },
+    {
+      title: "Keyword Intelligence",
+      description: "Automatically identify and integrate missing skills based on the specific industry you are targeting.",
+      icon: <SearchCode className="text-blue-600" size={28} />,
+      iconBg: "bg-blue-100",
+      borderColor: "hover:border-blue-300",
+      tag: "Live Scan"
+    },
+    {
+      title: "Instant PDF Formatting",
+      description: "Professional, clean, and standard-compliant PDF exports that preserve layout integrity across all devices.",
+      icon: <FileCheck className="text-orange-600" size={28} />,
+      iconBg: "bg-orange-100",
+      borderColor: "hover:border-orange-300",
+      tag: "Pro Export"
+    }
+  ];
 
-export default Feature
+  return (
+    <section id="features" className="py-24 px-6 bg-[#fafafa] overflow-hidden">
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Header Section */}
+        <div className="text-center mb-20">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm text-green-600 text-xs font-bold uppercase tracking-widest mb-6">
+            <Sparkles size={14} className="animate-pulse" />
+            <span>Next-Gen Career Tools</span>
+          </div>
+          <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tight mb-6">
+            Beat the <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-500">Robot Screeners.</span>
+          </h2>
+          <p className="text-lg text-slate-500 max-w-2xl mx-auto font-medium leading-relaxed">
+            Stop guessing what recruiters want. Use our AI to build a 
+            <span className="text-slate-900 font-bold"> high-scoring, ATS-optimized </span> 
+            resume in minutes.
+          </p>
+        </div>
+
+        {/* Features Grid - 2x2 Grid for a more 'App' feel */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+          {features.map((feature, index) => (
+            <div
+              key={index}
+              className={`group relative p-10 rounded-[2.5rem] border border-slate-200/60 bg-white transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.06)] ${feature.borderColor}`}
+            >
+              <div className="flex flex-col sm:flex-row items-start gap-6">
+                {/* Icon Box */}
+                <div className={`shrink-0 p-5 rounded-3xl ${feature.iconBg} transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-sm`}>
+                  {feature.icon}
+                </div>
+
+                {/* Content */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-2xl font-bold text-slate-900">
+                      {feature.title}
+                    </h3>
+                    <span className="hidden sm:block px-2 py-0.5 rounded-md bg-slate-50 text-[10px] font-bold text-slate-400 border border-slate-100 uppercase tracking-tighter">
+                      {feature.tag}
+                    </span>
+                  </div>
+                  <p className="text-slate-500 leading-relaxed font-medium text-lg">
+                    {feature.description}
+                  </p>
+                </div>
+              </div>
+
+              {/* Background Glow Effect */}
+              <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-transparent via-transparent to-slate-50/50 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom CTA Hook */}
+        <div className="mt-16 text-center">
+            <p className="text-slate-400 font-medium flex items-center justify-center gap-2">
+                <Zap size={16} className="text-yellow-500 fill-yellow-500" />
+                Trusted by 50,000+ job seekers at top tech companies
+            </p>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Feature;
