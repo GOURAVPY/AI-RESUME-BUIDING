@@ -117,7 +117,9 @@ export const updateResume = async (req, res) => {
     const { resumeId, resumeData, removebackground } = req.body;
     const image = req.file;
 
-    // 🛑 prevent crash
+    console.log("removebackground:", removebackground);
+    console.log("file:", image);
+
     if (!resumeId) {
       return res.status(400).json({ message: "Resume ID missing" });
     }
@@ -125,22 +127,27 @@ export const updateResume = async (req, res) => {
     let resumeDataCopy;
     try {
       resumeDataCopy = JSON.parse(resumeData);
-    } catch {
+    } catch (err) {
       return res.status(400).json({ message: "Invalid resumeData JSON" });
     }
 
-    // ✅ handle image safely
+    // ✅ convert to boolean
+    const shouldRemoveBg = removebackground === "yes";
+
     if (image) {
-      const imageBufferData = fs.createReadStream(image.path);
+      const fileBuffer = fs.readFileSync(image.path);
+
+      // ✅ convert to base64 (IMPORTANT)
+      const base64File = fileBuffer.toString("base64");
 
       const response = await imagekit.files.upload({
-        file: imageBufferData,
-        fileName: "resume.png",
+        file: base64File,
+        fileName: `resume_${Date.now()}.jpg`,
         folder: "user_resumes",
         transformation: {
           pre:
             "w-300,h-300,fo-face,z-0.75" +
-            (removebackground ? ",e-bgremove" : ""),
+            (shouldRemoveBg ? ",e-bgremove" : ""),
         },
       });
 
@@ -148,12 +155,15 @@ export const updateResume = async (req, res) => {
         resumeDataCopy.personal_info || {};
 
       resumeDataCopy.personal_info.image = response.url;
+
+      // ✅ cleanup
+      fs.unlinkSync(image.path);
     }
 
     const updatedResume = await Resume.findOneAndUpdate(
       { _id: resumeId, userId },
       resumeDataCopy,
-       { returnDocument: "after" } 
+      { returnDocument: "after" }
     );
 
     if (!updatedResume) {
@@ -161,7 +171,7 @@ export const updateResume = async (req, res) => {
     }
 
     return res.status(200).json({
-      message: "saved",
+      message: "Resume saved successfully",
       updatedResume,
     });
   } catch (error) {

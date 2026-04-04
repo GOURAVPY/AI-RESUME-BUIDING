@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { User } from "lucide-react";
+import { User, Camera, Sparkles, Check } from "lucide-react";
 import { fields } from "../constent";
 
 const PersonalInfoForm = ({
@@ -10,12 +10,10 @@ const PersonalInfoForm = ({
 }) => {
   const [preview, setPreview] = useState(null);
 
-  // Handle input change
   const handleChange = (field, value) => {
     onChange({ ...data, [field]: value });
   };
 
-  // Handle image preview safely
   useEffect(() => {
     if (!data?.image) {
       setPreview(null);
@@ -27,100 +25,110 @@ const PersonalInfoForm = ({
     } else {
       const objectUrl = URL.createObjectURL(data.image);
       setPreview(objectUrl);
-
       return () => URL.revokeObjectURL(objectUrl);
     }
   }, [data?.image]);
 
   return (
-    <div>
-      {/* Heading */}
-      <h3 className="text-lg font-semibold text-gray-900">
-        Personal Information
-      </h3>
-
-      <p className="text-sm text-gray-600">
-        Get started with your personal information
-      </p>
-
-      {/* Image + Toggle */}
-      <div className="flex items-center gap-4 mt-4">
-        {/* Image Upload */}
-        <label className="cursor-pointer flex items-center gap-3">
-          {preview ? (
-            <img
-              src={preview}
-              alt="user"
-              className="w-16 h-16 rounded-full object-cover ring ring-slate-300 hover:opacity-80"
-            />
-          ) : (
-            <>
-              <div className="w-16 h-16 flex items-center justify-center border rounded-full">
-                <User className="size-8 text-gray-500" />
-              </div>
-
-              {/* KEEP TEXT */}
-              <span className="text-sm text-gray-600">Upload user image</span>
-            </>
-          )}
-
-          <input
-            type="file"
-            accept="image/jpeg, image/png"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files[0];
-              if (file) handleChange("image", file);
-            }}
-          />
-        </label>
-
-        {/* Toggle */}
-        {typeof data?.image === "object" && (
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-700">Remove Background</span>
-
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={removeBackground}
-                onChange={() => setRemoveBackground((prev) => !prev)}
-              />
-
-              {/* Track */}
-              <div className="w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-green-600 transition"></div>
-
-              {/* Thumb */}
-              <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-5"></div>
-            </label>
-          </div>
-        )}
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* Header Section */}
+      <div>
+        <h3 className="text-xl font-bold text-slate-900 tracking-tight">
+          Personal Information
+        </h3>
+        <p className="text-sm text-slate-500 mt-1">
+          This information will be the first thing employers see.
+        </p>
       </div>
 
-      {/* Dynamic Fields */}
-      {fields.map((field) => {
-        const Icon = field.icon;
-
-        return (
-          <div key={field.key} className="space-y-1 mt-5">
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-600">
-              <Icon className="size-4" />
-              {field.label}
-              {field.required && <span className="text-red-500">*</span>}
-            </label>
-
+      {/* Profile Photo & AI Actions */}
+      <div className="flex flex-wrap items-center gap-6 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+        <div className="relative group">
+          <label className="cursor-pointer block">
+            <div className="relative size-24 rounded-full overflow-hidden ring-4 ring-white shadow-md transition-transform group-hover:scale-105">
+              {preview ? (
+                <img
+                  src={preview}
+                  alt="user"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-slate-200">
+                  <User className="size-10 text-slate-400" />
+                </div>
+              )}
+              {/* Overlay on hover */}
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <Camera className="text-white size-6" />
+              </div>
+            </div>
             <input
-              type={field.type}
-              value={data[field.key] || ""}
-              onChange={(e) => handleChange(field.key, e.target.value)}
-              placeholder={`Enter your ${field.label.toLowerCase()}`}
-              required={field.required}
-              className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"
+              type="file"
+              accept="image/jpeg, image/png"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) handleChange("image", file);
+              }}
             />
-          </div>
-        );
-      })}
+          </label>
+        </div>
+
+        <div className="flex-1 min-w-[200px] space-y-3">
+            <div className="flex flex-col">
+                <span className="text-sm font-bold text-slate-800">Profile Photo</span>
+                <span className="text-xs text-slate-500">JPG or PNG. Max 2MB.</span>
+            </div>
+          
+          {/* AI Remove Background Toggle */}
+          {typeof data?.image === "object" && (
+            <div 
+              onClick={() => setRemoveBackground(!removeBackground)}
+              className={`flex items-center justify-between gap-4 p-2 pl-3 rounded-xl border cursor-pointer transition-all ${
+                removeBackground 
+                ? "bg-indigo-600 border-indigo-600 text-white shadow-md shadow-indigo-100" 
+                : "bg-white border-slate-200 text-slate-600 hover:border-slate-300"
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <Sparkles className={`size-3.5 ${removeBackground ? "text-white" : "text-indigo-500"}`} />
+                <span className="text-[11px] font-bold uppercase tracking-wider">Remove Background</span>
+              </div>
+              
+              <div className={`size-5 rounded-full flex items-center justify-center transition-colors ${
+                removeBackground ? "bg-white/20" : "bg-slate-100"
+              }`}>
+                 {removeBackground && <Check className="size-3 text-white" strokeWidth={4} />}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Input Fields Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+        {fields.map((field) => {
+          const Icon = field.icon;
+          return (
+            <div key={field.key} className="space-y-2">
+              <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 ml-1">
+                <Icon className="size-3.5 text-slate-400" />
+                {field.label}
+                {field.required && <span className="text-rose-500">*</span>}
+              </label>
+
+              <input
+                type={field.type}
+                value={data[field.key] || ""}
+                onChange={(e) => handleChange(field.key, e.target.value)}
+                placeholder={`e.g. ${field.label === "Email" ? "alex@example.com" : field.label}`}
+                required={field.required}
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 placeholder:text-slate-300 focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all"
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

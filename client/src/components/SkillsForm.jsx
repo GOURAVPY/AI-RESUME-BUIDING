@@ -1,4 +1,4 @@
-import { Plus, Sparkles, X } from "lucide-react";
+import { Plus, Sparkles, X, Terminal, Cpu } from "lucide-react";
 import React, { useState } from "react";
 
 const SkillsForm = ({ data = [], onChange }) => {
@@ -23,78 +23,98 @@ const SkillsForm = ({ data = [], onChange }) => {
   };
 
   return (
-    <div className="space-y-5">
-  {/* Header */}
-  <div className="flex items-center justify-between">
-    <div>
-      <h3 className="text-lg font-semibold text-gray-900">
-        Skills
-      </h3>
-      <p className="text-sm text-gray-500">
-        Showcase your strengths
-      </p>
-    </div>
-
-    <Sparkles className="w-5 h-5 text-emerald-500" />
-  </div>
-
-  {/* Input Card */}
-  <div className="flex gap-2 bg-gray-50 p-2 rounded-xl border">
-    <input
-      type="text"
-      value={newSkill}
-      onChange={(e) => setNewSkill(e.target.value)}
-      onKeyDown={handleKeyPress}
-      placeholder="Type a skill and press Enter..."
-      className="flex-1 bg-transparent px-3 py-2 text-sm outline-none"
-    />
-
-    <button
-      onClick={addSkill}
-      disabled={!newSkill.trim()}
-      className="flex items-center gap-1 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg text-sm transition-all disabled:opacity-40"
-    >
-      <Plus className="w-4 h-4" />
-      Add
-    </button>
-  </div>
-
-  {/* Skills List */}
-  {data.length > 0 ? (
-    <div className="flex flex-wrap gap-2">
-      {data.map((skill, index) => (
-        <div
-          key={index}
-          className="flex items-center gap-2 px-3 py-1.5 bg-white border rounded-full text-sm shadow-sm hover:shadow transition-all"
-        >
-          <span className="text-gray-700">{skill}</span>
-
-          <button
-            onClick={() => removeSkill(index)}
-            className="text-gray-400 hover:text-red-500 transition"
-          >
-            <X className="w-3 h-3" />
-          </button>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* Header Section */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h3 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+            <Cpu className="size-5 text-indigo-500" />
+            Skills & Expertise
+          </h3>
+          <p className="text-sm text-slate-500 font-medium">
+            Showcase your technical and soft skills.
+          </p>
         </div>
-      ))}
-    </div>
-  ) : (
-    <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed rounded-xl text-gray-400">
-      <Sparkles className="w-6 h-6 mb-2" />
-      <p className="text-sm">No skills added yet</p>
-      <p className="text-xs">Start by adding your top skills</p>
-    </div>
-  )}
 
-  {/* Tip */}
-  <div className="flex items-start gap-2 text-xs text-gray-500 bg-gradient-to-r from-gray-50 to-gray-100 p-3 rounded-lg border">
-    <Sparkles className="w-4 h-4 mt-0.5 text-emerald-500" />
-    <p>
-      <strong>Tip:</strong> Add 8–10 relevant skills. Include both technical
-      (React, Node.js) and soft skills (communication, leadership).
-    </p>
-  </div>
-</div>
+        <div className="size-10 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100">
+          <Terminal className="size-5 text-slate-400" />
+        </div>
+      </div>
+
+      {/* Modern Input Card */}
+      <div className="group relative flex items-center gap-3 bg-white p-2 pl-4 rounded-[1.5rem] border border-slate-200 focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-500/5 transition-all shadow-sm">
+        <div className="flex-1 flex items-center gap-2">
+          <Plus className="size-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+          <input
+            type="text"
+            value={newSkill}
+            onChange={(e) => setNewSkill(e.target.value)}
+            onKeyDown={handleKeyPress}
+            placeholder="Type a skill (e.g. React, UI Design) and press Enter..."
+            className="w-full bg-transparent py-2 text-sm text-slate-600 outline-none placeholder:text-slate-400 font-medium"
+          />
+        </div>
+
+        <button
+          onClick={addSkill}
+          disabled={!newSkill.trim()}
+          className="group relative flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all duration-300 shadow-md disabled:opacity-30 disabled:grayscale overflow-hidden"
+        >
+           {/* Shimmer effect for the Add button */}
+           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-indigo-500/10 to-indigo-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+           
+          <span className="text-[10px] font-black uppercase tracking-widest">Add Skill</span>
+        </button>
+      </div>
+
+      {/* Skills Pill Cloud */}
+      {data.length > 0 ? (
+        <div className="flex flex-wrap gap-2 min-h-[50px] p-1">
+          {data.map((skill, index) => (
+            <div
+              key={index}
+              className="group flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-600 shadow-sm hover:border-indigo-200 hover:text-indigo-600 hover:bg-indigo-50/30 transition-all cursor-default animate-in zoom-in-95 duration-200"
+            >
+              <span>{skill}</span>
+
+              <button
+                onClick={() => removeSkill(index)}
+                className="opacity-0 group-hover:opacity-100 -mr-1 size-5 flex items-center justify-center rounded-full hover:bg-rose-100 hover:text-rose-500 transition-all"
+                title="Remove skill"
+              >
+                <X className="size-3" />
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : (
+        /* Empty State */
+        <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-slate-100 rounded-[2rem] bg-slate-50/30 text-slate-400 transition-all">
+          <div className="size-12 rounded-full bg-white border border-slate-100 flex items-center justify-center mb-3">
+             <Sparkles className="size-5 text-slate-200" />
+          </div>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-300">Your skillset is empty</p>
+        </div>
+      )}
+
+      {/* Premium Tip Section */}
+      <div className="relative overflow-hidden flex items-start gap-3 bg-slate-900 p-4 rounded-[1.5rem] border border-slate-800 group shadow-xl">
+        {/* Subtle background glow */}
+        <div className="absolute -right-4 -top-4 size-24 bg-emerald-500/10 blur-3xl group-hover:bg-emerald-500/20 transition-all" />
+        
+        <div className="mt-0.5 size-8 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 shrink-0">
+            <Sparkles className="size-4 text-emerald-400 animate-pulse" />
+        </div>
+        
+        <div className="space-y-1">
+          <p className="text-[10px] font-black uppercase tracking-widest text-emerald-400">Pro Optimization Tip</p>
+          <p className="text-xs text-slate-300 leading-relaxed">
+            Aim for <span className="text-white font-bold">8–10 core skills</span>. Mix high-demand technical tools with 
+            essential soft skills to show versatility.
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 
