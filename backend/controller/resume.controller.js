@@ -153,7 +153,7 @@ export const updateResume = async (req, res) => {
     const updatedResume = await Resume.findOneAndUpdate(
       { _id: resumeId, userId },
       resumeDataCopy,
-      { new: true }
+       { returnDocument: "after" } 
     );
 
     if (!updatedResume) {
@@ -161,7 +161,7 @@ export const updateResume = async (req, res) => {
     }
 
     return res.status(200).json({
-      message: "Resume updated successfully",
+      message: "saved",
       updatedResume,
     });
   } catch (error) {

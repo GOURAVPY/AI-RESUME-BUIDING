@@ -1,13 +1,13 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../assets/logo.svg"; // ✅ fix
+import logo from "../assets/logo.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../app/features/authSlice";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // ❗ missing before
+  const navigate = useNavigate();
 
   const logoutUser = () => {
     navigate("/");
@@ -15,22 +15,33 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="flex items-center justify-between max-w-7xl mx-auto px-4 py-3.5 text-slate-800">
-      <Link to="/">
-        <img src={logo} alt="logo" className="h-11 w-auto" />
-      </Link>
+    // Fixed wrapper to ensure it stays on top during scroll
+    <header className="fixed top-0 left-0 right-0 z-50 px-4 py-4">
+      <nav className="max-w-7xl mx-auto flex items-center justify-between bg-white/80 backdrop-blur-md border border-slate-200/50 px-6 py-3 rounded-2xl shadow-sm">
+        
+        {/* Logo Section */}
+        <Link to="/" className="flex items-center transition-transform active:scale-95">
+          <img src={logo} alt="logo" className="h-9 w-auto" />
+        </Link>
 
-      <div className="flex items-center gap-4 text-sm">
-        <p className="mr-2 max-sm:hidden">Hi, {user?.name}</p>
+        {/* User Actions */}
+        <div className="flex items-center gap-6">
+          <div className="flex flex-col items-end max-sm:hidden">
+            <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Account</span>
+            <p className="text-sm font-semibold text-slate-700">
+              {user?.name}
+            </p>
+          </div>
 
-        <button
-          onClick={logoutUser}
-          className="bg-white hover:bg-slate-50 border border-gray-300 px-7 py-1.5 rounded-full active:scale-95 transition-all"
-        >
-          Logout
-        </button>
-      </div>
-    </nav>
+          <button
+            onClick={logoutUser}
+            className="group relative inline-flex items-center justify-center px-6 py-2 text-sm font-bold text-white transition-all duration-200 bg-slate-900 rounded-xl hover:bg-slate-800 active:scale-95 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2"
+          >
+            Logout
+          </button>
+        </div>
+      </nav>
+    </header>
   );
 };
 
