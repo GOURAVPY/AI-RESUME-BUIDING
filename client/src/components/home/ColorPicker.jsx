@@ -23,7 +23,6 @@ const ColorPicker = ({ selectedColor, onChange }) => {
     { name: "Black", value: "#111827" },
   ];
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -35,36 +34,42 @@ const ColorPicker = ({ selectedColor, onChange }) => {
   }, []);
 
   return (
+    
     <div className="relative inline-block" ref={dropdownRef}>
       
-      {/* Main Trigger Button */}
+      {/* Main Trigger Button - Responsive Text */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`group flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-300 ${
+        className={`group flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-full border transition-all duration-300 ${
           isOpen 
           ? "bg-slate-900 border-slate-900 text-white shadow-lg" 
           : "bg-white border-slate-200 text-slate-700 hover:border-slate-400 shadow-sm"
         }`}
       >
         <Palette size={16} className={isOpen ? "animate-pulse" : "text-indigo-500"} />
-        <span className="text-xs font-bold uppercase tracking-wider">Theme</span>
+        
+        {/* Hidden on Mobile/Tablet (below 768px) */}
+        <span className="hidden md:block text-xs font-bold uppercase tracking-wider">Theme</span>
+        
+        {/* Dynamic Color Circle */}
         <div 
-          className="size-5 rounded-full border-2 border-white shadow-sm transition-transform group-hover:scale-110" 
+          className="size-4 md:size-5 rounded-full border-2 border-white shadow-sm transition-transform group-hover:scale-110" 
           style={{ backgroundColor: selectedColor }} 
         />
-        <ChevronDown size={14} className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+
+        <ChevronDown size={14} className={`hidden md:block transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
-      {/* Dropdown Popover */}
+      {/* Dropdown Popover - Center aligned on mobile */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-3 p-5 z-[100] bg-white/90 backdrop-blur-xl rounded-[2rem] border border-slate-200 shadow-2xl shadow-slate-200/50 w-[280px] animate-in fade-in zoom-in-95 duration-200 origin-top-left">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 lg:left-0 lg:translate-x-0 mt-3 p-5 z-[100] bg-white/95 backdrop-blur-xl rounded-[2rem] border border-slate-200 shadow-2xl w-[260px] md:w-[280px] animate-in fade-in zoom-in-95 duration-200 origin-top">
           
           <div className="flex items-center justify-between mb-4 px-1">
              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Presets</h4>
              <span className="text-[10px] font-mono text-slate-400">{selectedColor.toUpperCase()}</span>
           </div>
 
-          <div className="grid grid-cols-5 gap-3 mb-6">
+          <div className="grid grid-cols-5 gap-2 md:gap-3 mb-6">
             {colors.map((color) => (
               <button
                 key={color.value}
@@ -73,16 +78,14 @@ const ColorPicker = ({ selectedColor, onChange }) => {
                   onChange(color.value);
                   setIsOpen(false);
                 }}
-                className="relative group size-10 rounded-xl transition-all duration-300 hover:scale-110 active:scale-90 flex items-center justify-center overflow-hidden"
+                className="relative group size-9 md:size-10 rounded-xl transition-all duration-300 hover:scale-110 active:scale-90 flex items-center justify-center overflow-hidden"
                 style={{ backgroundColor: color.value }}
               >
-                {/* Highlight ring on hover */}
                 <div className="absolute inset-0 border-2 border-white/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                 
-                {/* Selection Check */}
                 {selectedColor.toLowerCase() === color.value.toLowerCase() && (
                   <div className="bg-white/20 backdrop-blur-sm size-full flex items-center justify-center animate-in zoom-in duration-300">
-                    <Check className="size-5 text-white" strokeWidth={3} />
+                    <Check className="size-4 md:size-5 text-white" strokeWidth={3} />
                   </div>
                 )}
               </button>
@@ -92,7 +95,7 @@ const ColorPicker = ({ selectedColor, onChange }) => {
           {/* Custom Color Selection */}
           <div className="border-t border-slate-100 pt-5">
             <div className="flex items-center gap-3 bg-slate-50 p-2 rounded-2xl border border-slate-100 group focus-within:border-indigo-300 transition-all">
-                <div className="relative size-10 shrink-0">
+                <div className="relative size-9 md:size-10 shrink-0">
                     <input
                         type="color"
                         value={selectedColor}
@@ -103,12 +106,12 @@ const ColorPicker = ({ selectedColor, onChange }) => {
                         className="size-full rounded-xl border-2 border-white shadow-sm flex items-center justify-center"
                         style={{ backgroundColor: selectedColor }}
                     >
-                        <Pipette size={16} className="text-white mix-blend-difference" />
+                        <Pipette size={14} className="text-white mix-blend-difference" />
                     </div>
                 </div>
                 <div className="flex flex-col">
-                    <span className="text-[10px] font-black uppercase text-slate-400 tracking-tighter">Custom Color</span>
-                    <span className="text-xs font-bold text-slate-700 italic">Click to pick...</span>
+                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-tighter">Custom</span>
+                    <span className="text-[11px] font-bold text-slate-700">Pick color...</span>
                 </div>
             </div>
           </div>

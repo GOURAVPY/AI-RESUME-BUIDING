@@ -5,7 +5,6 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Updated icons to match standard Lucide naming (Capitalized)
   const templates = [
     {
       id: "classic",
@@ -45,18 +44,27 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
 
   return (
     <div className="relative inline-block" ref={dropdownRef}>
-      {/* TRIGGER BUTTON - Modern UI */}
+      {/* TRIGGER BUTTON - Now Responsive */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`group flex items-center gap-2 px-4 py-2 rounded-xl border transition-all duration-300 ${
+        className={`group flex items-center justify-center gap-2 p-2 md:px-4 md:py-2 rounded-xl border transition-all duration-300 ${
           isOpen
             ? "bg-slate-900 border-slate-900 text-white shadow-lg"
             : "bg-white border-slate-200 text-slate-700 hover:border-blue-400 shadow-sm"
         }`}
       >
         <Layers size={16} className={isOpen ? "text-blue-400" : "text-blue-600"} />
-        <span className="text-xs font-bold uppercase tracking-widest">Template</span>
-        <ChevronDown size={14} className={`transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+        
+        {/* Text hidden on mobile/tablet, visible on desktop (md) */}
+        <span className="hidden md:block text-xs font-bold uppercase tracking-widest">
+          Template
+        </span>
+
+        {/* Chevron hidden on mobile/tablet */}
+        <ChevronDown 
+          size={14} 
+          className={`hidden md:block transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} 
+        />
       </button>
 
       {/* DROPDOWN - Premium UI */}
@@ -82,7 +90,6 @@ const TemplateSelector = ({ selectedTemplate, onChange }) => {
                       : "hover:bg-slate-50 border border-transparent"
                   }`}
                 >
-                  {/* Icon Box */}
                   <div className={`size-8 rounded-lg flex items-center justify-center shrink-0 ${
                     isSelected ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-500 group-hover:bg-white group-hover:shadow-sm"
                   }`}>
