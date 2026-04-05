@@ -12,10 +12,10 @@ import {
   Save,
 } from "lucide-react";
 import { sectuions } from "../constant";
+import ColorPicker from "../components/ColorPicker";
 import Persnolinfoform from "../components/Persnolinfoform";
 import ResumePreview from "../components/ResumePreview";
 import TeamplateSelector from "../components/TeamplateSelector";
-import ColorPicker from "../components/ColorPicker";
 import SummaryForm from "../components/SummaryForm";
 import ExperienceForm from "../components/ExperienceForm";
 import EducationForm from "../components/EducationForm"; 
