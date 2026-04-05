@@ -15,10 +15,10 @@ import { sectuions } from "../constent";
 import Persnolinfoform from "../components/Persnolinfoform";
 import ResumePreview from "../components/ResumePreview";
 import TeamplateSelector from "../components/TeamplateSelector";
-import ColorPicker from "../components/ColorPicker";// No '/home/' needed now!
+import ColorPicker from "../components/ColorPicker";
 import SummaryForm from "../components/SummaryForm";
-import ExperienceForm from "../components/ExperienceForm"; // No '/home/' needed now!
-import EducationForm from "../components/EducationForm"; // No '/home/' needed now!
+import ExperienceForm from "../components/ExperienceForm";
+import EducationForm from "../components/EducationForm"; 
 import ProjectForm from "../components/ProjectForm";
 import SkillsForm from "../components/SkillsForm";
 import endPoint from "../configs/api";
