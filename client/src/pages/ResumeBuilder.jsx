@@ -12,7 +12,7 @@ import {
   Save,
 } from "lucide-react";
 import { sectuions } from "../constant";
-import ColorPicker from "../components/ColorPicker.jsx";
+import ColorPicker from "../components/home/ColorPicker.jsx";
 import Persnolinfoform from "../components/Persnolinfoform";
 import ResumePreview from "../components/ResumePreview";
 import TeamplateSelector from "../components/TeamplateSelector";
