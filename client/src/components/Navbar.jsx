@@ -1,9 +1,7 @@
-import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../assets/logo.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../app/features/authSlice";
-import {Zap} from 'lucide-react'
+import { Zap } from "lucide-react";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -20,10 +18,7 @@ const Navbar = () => {
     <header className="fixed top-0 left-0 right-0 z-50 px-4 py-4">
       <nav className="max-w-7xl mx-auto flex items-center justify-between bg-white/80 backdrop-blur-md border border-slate-200/50 px-6 py-3 rounded-2xl shadow-sm">
         {/* Logo Section */}
-        <Link
-          to="/"
-           className="flex items-center gap-2 group"
-        >
+        <Link to="/" className="flex items-center gap-2 group">
           <div className="bg-green-500 p-2 rounded-lg group-hover:rotate-6 transition-transform">
             <Zap size={20} className="text-white fill-white" />
           </div>
