@@ -15,7 +15,7 @@ import { sectuions } from "../constent";
 import Persnolinfoform from "../components/Persnolinfoform";
 import ResumePreview from "../components/ResumePreview";
 import TeamplateSelector from "../components/TeamplateSelector";
-import ColorPicker from "../components/ColorPicker"; // No '/home/' needed now!
+import ColorPicker from "../components/ColorPicker";// No '/home/' needed now!
 import SummaryForm from "../components/SummaryForm";
 import ExperienceForm from "../components/ExperienceForm"; // No '/home/' needed now!
 import EducationForm from "../components/EducationForm"; // No '/home/' needed now!
