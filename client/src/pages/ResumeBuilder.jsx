@@ -12,7 +12,7 @@ import {
   Save,
 } from "lucide-react";
 import { sectuions } from "../constent";
-import Persnolinfoform from "../components/persnolinfoform";
+import Persnolinfoform from "../components/Persnolinfoform";
 import ResumePreview from "../components/ResumePreview";
 import TeamplateSelector from "../components/TeamplateSelector";
 import ColorPicker from "../components/ColorPIcker";
