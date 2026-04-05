@@ -1,6 +1,6 @@
 import React from "react";
 import { GraduationCap, Plus, Trash2, School, Award, BookOpen, CalendarDays, Milestone } from "lucide-react";
-import { newEducation } from "../constent";
+import { newEducation } from "../constant";
 
 const EductionForm = ({ data = [], onChange }) => {
   const addEduction = () => {

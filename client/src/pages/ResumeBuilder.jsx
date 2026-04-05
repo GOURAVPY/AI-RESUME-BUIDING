@@ -11,7 +11,7 @@ import {
   Loader2, // Added for the button spinner
   Save,
 } from "lucide-react";
-import { sectuions } from "../constent";
+import { sectuions } from "../constant";
 import Persnolinfoform from "../components/Persnolinfoform";
 import ResumePreview from "../components/ResumePreview";
 import TeamplateSelector from "../components/TeamplateSelector";

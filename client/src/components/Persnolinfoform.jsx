@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { User, Camera, Sparkles, Check } from "lucide-react";
-import { fields } from "../constent";
+import { fields } from "../constant";
 
 const PersonalInfoForm = ({
   data,

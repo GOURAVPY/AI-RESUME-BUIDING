@@ -1,5 +1,5 @@
 import { Briefcase, Plus, Sparkles, Trash2, Calendar, Building2, UserCircle, History } from "lucide-react";
-import { newExperience } from "../constent";
+import { newExperience } from "../constant";
 
 const ExperienceForm = ({ data = [], onChange }) => {
   const addExperience = () => {

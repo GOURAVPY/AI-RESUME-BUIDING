@@ -1,6 +1,6 @@
 import { Folder, Plus, Sparkles, Trash2, Globe, Rocket, Code2, Layout } from "lucide-react";
 import React from "react";
-import { newProject } from "../constent";
+import { newProject } from "../constant";
 
 const ProjectForm = ({ data = [], onChange }) => {
   const addProject = () => {
