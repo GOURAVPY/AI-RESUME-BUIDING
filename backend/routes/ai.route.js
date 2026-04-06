@@ -13,7 +13,7 @@ aiRoute.post(
   protect,
   enhanceProfessionalSummary,
 );
-aiRoute.post("/enhance/job-jescription", protect, enhanceJobDescription);
+aiRoute.post("/enhance/job-diescription", protect, enhanceJobDescription);
 aiRoute.post("/enhance/uplode-resume", protect, uploadResume);
 
 export default aiRoute;

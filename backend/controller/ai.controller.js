@@ -1,5 +1,10 @@
 import ai from "../configs/ai.js";
 import Resume from "../models/Resume.js";
+
+let lastRequestTime = 0;
+
+const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+
 export const enhanceProfessionalSummary = async (req, res) => {
   const SYSTEM_PROMPT = `
 You are an expert resume writer with deep knowledge of ATS systems and hiring standards.
@@ -11,7 +16,7 @@ Write a compelling resume summary that:
 - Sounds confident and professional
 
 Constraints:
-- 2–3 sentences only
+- 3–4 sentences only
 - No personal pronouns
 - No fluff or generic phrases
 - No explanations
@@ -65,40 +70,88 @@ Guidelines:
 - Make it ATS-friendly and professional
 
 Constraints:
-- Use bullet points
-- Keep each point concise and impactful
+- Return EXACTLY 3 to 4 bullet points ONLY
+- Each bullet must be 1 short sentence (max 15 words)
+- Use bullet format (• or -)
 - No personal pronouns (I, my, me)
 - No explanations
+- No extra text before or after
 
-Return ONLY the improved bullet points.
+Return ONLY the bullet points.
 `;
 
-  try {
+   try {
     const { userContent } = req.body;
 
     if (!userContent) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const response = await ai.chat.completions.create({
-      model: process.env.AI_MODEL,
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: userContent },
-      ],
-    });
+    // 🔥 COOLDOWN (5 sec)
+    const now = Date.now();
+    if (now - lastRequestTime < 5000) {
+      return res.status(429).json({
+        success: false,
+        message: "Wait 5 seconds before trying again",
+      });
+    }
+    lastRequestTime = now;
 
-    const result = response.choices[0].message.content;
+    let response;
 
-    // ✅ SEND BACK TO FRONTEND
-    res.status(200).json({
+    try {
+      response = await ai.chat.completions.create({
+        model: process.env.AI_MODEL || "gpt-4o-mini",
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: userContent },
+        ],
+        max_tokens: 120,
+        temperature: 0.6,
+      });
+    } catch (err) {
+      // 🔁 AUTO RETRY (IMPORTANT)
+      if (err?.status === 429) {
+        console.log("Retrying after rate limit...");
+        await sleep(2000);
+
+        response = await ai.chat.completions.create({
+          model: process.env.AI_MODEL || "gpt-4o-mini",
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            { role: "user", content: userContent },
+          ],
+          max_tokens: 120,
+        });
+      } else {
+        throw err;
+      }
+    }
+
+    let result = response?.choices?.[0]?.message?.content || "";
+
+    result = result
+      .split("\n")
+      .filter(line => line.trim() !== "")
+      .slice(0, 4)
+      .join("\n");
+
+    return res.status(200).json({
       success: true,
       result,
     });
-  } catch (error) {
-    console.log(error);
 
-    res.status(500).json({
+  } catch (error) {
+    console.log("🔥 FINAL ERROR:", error);
+
+    if (error?.status === 429) {
+      return res.status(429).json({
+        success: false,
+        message: "Too many requests. Try again later.",
+      });
+    }
+
+    return res.status(500).json({
       success: false,
       message: "AI generation failed",
     });

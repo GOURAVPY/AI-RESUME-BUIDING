@@ -44,7 +44,7 @@ const App = () => {
 
         {/* Login and Preview outside app */}
         {/* <Route path="/login" element={<Login />} /> */}
-        <Route path="/view/:resumeId" element={<Preview />} />
+        <Route path="/share/:resumeId" element={<Preview />} />
 
         {/* App Routes */}
         <Route path="app" element={<Layout />}>

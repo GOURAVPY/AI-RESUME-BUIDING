@@ -4,20 +4,31 @@ import { useParams, Link } from "react-router-dom";
 import { dummyResumeData } from "../assets/assets";
 import Loader from "../components/Loader";
 import { ArrowLeft } from "lucide-react";
+import endPoint from './../configs/api';
 
 const Preview = () => {
+  
   const { resumeId } = useParams();
+
   const [isLoading, setLoading] = useState(true);
   const [resumeData, setResumeData] = useState(null);
 
   const loadResume = async () => {
-    const resume = dummyResumeData.find((resume) => resume._id === resumeId);
-    if (resume) {
-      setResumeData(resume);
-      document.title = resume.title;
+  try {
+    const { data } = await endPoint.get(`/api/resumes/public/${resumeId}`);
+    if (data?.resume) {
+      setResumeData(data.resume);
+    } else {
+      console.warn("Resume not found for ID:", resumeId);
+      setResumeData(null);
     }
+  } catch (error) {
+    console.error("Failed to load resume:", error);
+    setResumeData(null);
+  } finally {
     setLoading(false);
-  };
+  }
+}
 
   useEffect(() => {
     loadResume();
