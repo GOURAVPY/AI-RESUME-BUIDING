@@ -130,9 +130,9 @@ const ClassicTemplate = ({ data, accentColor }) => {
         </Section>
       )}
 
-      {/* PROJECTS */}
+      {/* project */}
       {data.project?.length > 0 && (
-        <Section title="Projects">
+        <Section title="project">
           <div className="space-y-5">
             {data.project.map((proj, index) => (
               <div key={index} className="pl-4 border-l-2 border-gray-300">

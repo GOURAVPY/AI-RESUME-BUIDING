@@ -154,11 +154,11 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                         </section>
                     )}
 
-                    {/* Projects */}
+                    {/* project */}
                     {data.project && data.project.length > 0 && (
                         <section>
                             <h2 className="text-sm uppercase tracking-widest font-semibold" style={{ color: accentColor }}>
-                                PROJECTS
+                                project
                             </h2>
                             <div className="space-y-4">
                                 {data.project.map((project, index) => (

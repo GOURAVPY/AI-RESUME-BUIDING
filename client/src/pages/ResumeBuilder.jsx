@@ -78,34 +78,60 @@ const ResumeBuilder = () => {
   const downloadResume = () => { window.print(); };
 
   const saveResume = async () => {
-    try {
-      if (!resumeData._id) {
-        toast.error("Resume not loaded yet!");
-        return;
-      }
-      setLoading(true);
-      let updateResumeData = structuredClone(resumeData);
-      if (typeof resumeData.personal_info.image === "object" && !(resumeData.personal_info.image instanceof File)) {
-        delete updateResumeData.personal_info.image;
-      }
-      const formData = new FormData();
-      formData.append("resumeId", resumeData._id);
-      formData.append("resumeData", JSON.stringify(updateResumeData));
-      formData.append("removebackground", removeBackground ? "yes" : "no");
-      if (resumeData.personal_info.image instanceof File) {
-        formData.append("image", resumeData.personal_info.image);
-      }
-      const { data } = await endPoint.put("/api/resumes/update", formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setResumeData(data.updatedResume);
-      toast.success(data.message);
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to save");
-    } finally {
-      setLoading(false);
+  try {
+    if (!resumeData._id) {
+      toast.error("Resume not loaded yet!");
+      return;
     }
-  };
+
+    setLoading(true);
+
+    let updateResumeData = structuredClone(resumeData);
+
+    // 🔥🔥🔥 ADD THIS BLOCK (MAIN FIX)
+    updateResumeData.project = (updateResumeData.project || []).map((p) => ({
+      ...p,
+      description: Array.isArray(p.description)
+        ? p.description.join(", ") // ✅ FIX
+        : p.description || "",
+    }));
+
+    // 🔥 existing logic
+    if (
+      typeof resumeData.personal_info.image === "object" &&
+      !(resumeData.personal_info.image instanceof File)
+    ) {
+      delete updateResumeData.personal_info.image;
+    }
+
+    const formData = new FormData();
+    formData.append("resumeId", resumeData._id);
+
+    // 🔥 USE FIXED DATA
+    formData.append("resumeData", JSON.stringify(updateResumeData));
+
+    formData.append("removebackground", removeBackground ? "yes" : "no");
+
+    if (resumeData.personal_info.image instanceof File) {
+      formData.append("image", resumeData.personal_info.image);
+    }
+
+    // 🧪 DEBUG (optional)
+    console.log("FINAL PROJECT:", updateResumeData.project);
+
+    const { data } = await endPoint.put("/api/resumes/update", formData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    setResumeData(data.updatedResume);
+    toast.success(data.message);
+
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Failed to save");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleShare = () => {
     const url = `${window.location.origin}/share/${resumeId}`;

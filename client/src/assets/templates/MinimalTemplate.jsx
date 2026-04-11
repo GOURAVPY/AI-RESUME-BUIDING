@@ -127,9 +127,9 @@ const MinimalTemplate = ({ data, accentColor = "#0f172a" }) => {
           )}
         </div>
 
-        {/* Projects */}
+        {/* project */}
         {data.project?.length > 0 && (
-          <Section title="Selected Projects">
+          <Section title="Selected project">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {data.project.map((proj, index) => (
                 <div key={index} className="border-l-2 border-slate-100 pl-4">

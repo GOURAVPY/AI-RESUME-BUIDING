@@ -90,5 +90,5 @@ export const newEducation = {
 export const newProject = {
   name: "",
   type: "",
-  description: "",
+  description: [''],
 };

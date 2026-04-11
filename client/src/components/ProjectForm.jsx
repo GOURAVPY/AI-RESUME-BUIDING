@@ -25,7 +25,7 @@ const ProjectForm = ({ data = [], onChange }) => {
         <div className="space-y-0.5 sm:space-y-1">
           <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
             <Rocket className="size-5 text-indigo-500" />
-            Projects
+            project
           </h3>
           <p className="text-[11px] sm:text-sm text-slate-500 font-medium">
             Showcase your builds and personal work.
@@ -46,7 +46,7 @@ const ProjectForm = ({ data = [], onChange }) => {
           <div className="size-14 sm:size-16 rounded-2xl bg-white shadow-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-500">
              <Folder className="size-6 sm:size-8 text-slate-300" />
           </div>
-          <p className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-widest">No Projects Found</p>
+          <p className="text-xs sm:text-sm font-bold text-slate-900 uppercase tracking-widest">No project Found</p>
         </div>
       ) : (
         <div className="space-y-6 sm:space-y-8">

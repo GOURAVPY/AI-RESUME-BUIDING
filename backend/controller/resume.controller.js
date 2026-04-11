@@ -51,7 +51,6 @@ export const deleteResume = async (req, res) => {
     res.status(200).json({
       message: "Resume deleted successfully",
     });
-
   } catch (error) {
     console.log("DELETE ERROR:", error); // 👈 VERY IMPORTANT
     res.status(500).json({
@@ -117,52 +116,72 @@ export const updateResume = async (req, res) => {
     const { resumeId, resumeData, removebackground } = req.body;
     const image = req.file;
 
-    console.log("removebackground:", removebackground);
-    console.log("file:", image);
-
     if (!resumeId) {
       return res.status(400).json({ message: "Resume ID missing" });
     }
 
-    let resumeDataCopy;
+    // ✅ Parse JSON safely
+    let data;
     try {
-      resumeDataCopy = JSON.parse(resumeData);
-    } catch (err) {
-      return res.status(400).json({ message: "Invalid resumeData JSON" });
+      data = JSON.parse(resumeData);
+    } catch {
+      return res.status(400).json({ message: "Invalid JSON format" });
     }
 
-    // ✅ convert to boolean
-    const shouldRemoveBg = removebackground === "yes";
+    // ===============================
+    // 🔥 FIX PROJECT FIELD COMPLETELY
+    // ===============================
 
+    // Case 1: project comes as string
+    if (typeof data.project === "string") {
+      try {
+        data.project = JSON.parse(data.project);
+      } catch {
+        data.project = [];
+      }
+    }
+
+    // Case 2: ensure array
+    if (!Array.isArray(data.project)) {
+      data.project = [];
+    }
+
+    // Case 3: normalize each project
+    data.project = data.project.map((p) => ({
+      name: p.name || "",
+      type: p.type || "",
+      description: Array.isArray(p.description)
+        ? p.description.join(", ") // 🔥 convert array → string
+        : p.description || "",
+    }));
+
+    console.log("✅ FINAL PROJECT:", data.project);
+
+    // ===============================
+    // 🔥 IMAGE (optional)
+    // ===============================
     if (image) {
       const fileBuffer = fs.readFileSync(image.path);
-
-      // ✅ convert to base64 (IMPORTANT)
       const base64File = fileBuffer.toString("base64");
 
       const response = await imagekit.files.upload({
         file: base64File,
         fileName: `resume_${Date.now()}.jpg`,
         folder: "user_resumes",
-        transformation: {
-          pre:
-            "w-300,h-300,fo-face,z-0.75" +
-            (shouldRemoveBg ? ",e-bgremove" : ""),
-        },
       });
 
-      resumeDataCopy.personal_info =
-        resumeDataCopy.personal_info || {};
+      data.personal_info = data.personal_info || {};
+      data.personal_info.image = response.url;
 
-      resumeDataCopy.personal_info.image = response.url;
-
-      // ✅ cleanup
       fs.unlinkSync(image.path);
     }
 
+    // ===============================
+    // 🔥 UPDATE DATABASE
+    // ===============================
     const updatedResume = await Resume.findOneAndUpdate(
       { _id: resumeId, userId },
-      resumeDataCopy,
+      { $set: data },
       { returnDocument: "after" }
     );
 
@@ -171,11 +190,12 @@ export const updateResume = async (req, res) => {
     }
 
     return res.status(200).json({
-      message: "Resume saved successfully",
+      message: "Resume updated successfully",
       updatedResume,
     });
+
   } catch (error) {
-    console.error("Update resume error:", error);
+    console.error("🔥 FINAL ERROR:", error);
     return res.status(500).json({ message: "Server error" });
   }
 };

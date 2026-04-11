@@ -13,7 +13,7 @@ import {
 import { useSelector } from "react-redux";
 import endPoint from "../configs/api";
 import { toast } from "react-toastify";
-import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
+// import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf";
 
 const Dashboard = () => {
   const { user, token } = useSelector((state) => state.auth);
@@ -32,17 +32,17 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
-  const pdfToText = async (file) => {
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    let text = "";
-    for (let i = 1; i <= pdf.numPages; i++) {
-      const page = await pdf.getPage(i);
-      const content = await page.getTextContent();
-      text += content.items.map((item) => item.str).join(" ");
-    }
-    return text;
-  };
+  // const pdfToText = async (file) => {
+  //   const arrayBuffer = await file.arrayBuffer();
+  //   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  //   let text = "";
+  //   for (let i = 1; i <= pdf.numPages; i++) {
+  //     const page = await pdf.getPage(i);
+  //     const content = await page.getTextContent();
+  //     text += content.items.map((item) => item.str).join(" ");
+  //   }
+  //   return text;
+  // };
 
   const loadAllResumes = async () => {
     try {
@@ -77,30 +77,46 @@ const Dashboard = () => {
   };
 
   const uploadResume = async (e) => {
-    e.preventDefault();
-    if (!resume) {
-      toast.error("Please select a PDF file");
-      return;
-    }
-    try {
-      setIsLoading(true);
-      const resumeText = await pdfToText(resume);
-      const { data } = await endPoint.post(
-        "/api/ai/enhance/uplode-resume",
-        { title, resumeText },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setResume(null);
-      setTitel("");
-      setShowUploadResume(false);
-      navigate(`/app/builder/${data.resumeId}`);
-      toast.success("Resume uploaded successfully!");
-    } catch (error) {
-      toast.error(error?.response?.data?.message || error.message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  e.preventDefault();
+
+  if (!resume) {
+    toast.error("Please select a PDF file");
+    return;
+  }
+
+  try {
+    setIsLoading(true);
+
+    const formData = new FormData();
+    formData.append("resume", resume); // ✅ file
+    formData.append("title", title);
+
+    const { data } = await endPoint.post(
+      "/api/ai/enhance/uplode-resume",
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(data);
+    
+
+    setResume(null);
+    setTitel("");
+    setShowUploadResume(false);
+
+    navigate(`/app/builder/${data.resumeId}`);
+    toast.success("Resume uploaded successfully!");
+
+  } catch (error) {
+    console.log(error);
+    toast.error(error?.response?.data?.message || error.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const editResume = async (e) => {
     e.preventDefault();

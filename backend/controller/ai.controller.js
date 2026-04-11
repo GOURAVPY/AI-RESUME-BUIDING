@@ -1,9 +1,11 @@
 import ai from "../configs/ai.js";
 import Resume from "../models/Resume.js";
+import * as pdfjsLib from "pdfjs-dist/legacy/build/pdf.js";
+import fs from "fs";
 
 let lastRequestTime = 0;
 
-const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
 export const enhanceProfessionalSummary = async (req, res) => {
   const SYSTEM_PROMPT = `
@@ -22,6 +24,7 @@ Constraints:
 - No explanations
 
 Return ONLY the final polished summary.
+
 `;
 
   try {
@@ -80,7 +83,7 @@ Constraints:
 Return ONLY the bullet points.
 `;
 
-   try {
+  try {
     const { userContent } = req.body;
 
     if (!userContent) {
@@ -132,7 +135,7 @@ Return ONLY the bullet points.
 
     result = result
       .split("\n")
-      .filter(line => line.trim() !== "")
+      .filter((line) => line.trim() !== "")
       .slice(0, 4)
       .join("\n");
 
@@ -140,7 +143,6 @@ Return ONLY the bullet points.
       success: true,
       result,
     });
-
   } catch (error) {
     console.log("🔥 FINAL ERROR:", error);
 
@@ -161,10 +163,8 @@ Return ONLY the bullet points.
 export const uploadResume = async (req, res) => {
   const SYSTEM_PROMPT = `
 You are an expert resume writer and ATS optimization specialist.
-
 Your task is to extract structured data from a resume.
-
-Return JSON in this format:
+Return JSON in correct format.
 {
   "personal_info": {
     "full_name": "",
@@ -180,18 +180,37 @@ Return JSON in this format:
 `;
 
   try {
-    const { resumeText, title } = req.body;
-    const userId = req.userId;
+    const { title } = req.body;
+    const userId = req.user._id; // ensure auth middleware sets req.user
 
-    if (!resumeText) {
-      return res.status(400).json({ message: "Missing required fields" });
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
     }
 
-   const userPrompt = `
+    // Read PDF
+    const dataBuffer = new Uint8Array(fs.readFileSync(req.file.path));
+    const pdf = await pdfjsLib.getDocument({ data: dataBuffer }).promise;
+
+    let resumeText = "";
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      resumeText += content.items.map((item) => item.str).join(" ");
+    }
+
+    fs.unlinkSync(req.file.path); // remove temp file
+
+    if (!resumeText) {
+      return res.status(400).json({ message: "No text found in PDF" });
+    }
+
+    const limitedText = resumeText.slice(0, 8000); // limit for AI
+
+    const userPrompt = `
 Extract structured resume data from the following text.
 
 Resume:
-${resumeText}
+${limitedText}
 
 Return JSON in this exact format:
 
@@ -226,7 +245,7 @@ Return JSON in this exact format:
       "gpa": ""
     }
   ],
-  "projects": [
+  "project": [
     {
       "name": "",
       "type": "",
@@ -240,38 +259,88 @@ Rules:
 - Missing fields = "" or []
 - Bullet points must be strong and ATS optimized
 - No personal pronouns
-`;;
+`;
 
-    const response = await ai.chat.completions.create({
-      model: process.env.AI_MODEL,
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        { role: "user", content: userPrompt },
-      ],
-      response_format: { type: "json_object" },
-    });
+    // Call AI
+    let response;
+    try {
+      response = await ai.chat.completions.create({
+        model: process.env.AI_MODEL,
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: userPrompt },
+        ],
+        response_format: { type: "json_object" },
+      });
+    } catch (err) {
+      console.log("AI ERROR, retrying...", err.status);
+      if (err.status === 503 || err.status === 429) {
+        await new Promise((r) => setTimeout(r, 2000));
+        response = await ai.chat.completions.create({
+          model: process.env.AI_MODEL,
+          messages: [
+            { role: "system", content: SYSTEM_PROMPT },
+            { role: "user", content: userPrompt },
+          ],
+          response_format: { type: "json_object" },
+        });
+      } else {
+        throw err;
+      }
+    }
 
     const extractedData = response.choices[0].message.content;
+    let parsedData;
 
-    // ✅ parse JSON correctly
-    const parsedData = JSON.parse(extractedData);
+    // ✅ Parse JSON and fix arrays
+    try {
+      parsedData = JSON.parse(extractedData);
 
+      // Ensure experience descriptions are arrays
+      if (parsedData.experience) {
+        parsedData.experience = parsedData.experience.map((exp) => ({
+          ...exp,
+          description: Array.isArray(exp.description)
+            ? exp.description
+            : [exp.description || ""],
+        }));
+      }
+
+      // Ensure project descriptions are arrays
+      if (parsedData.project) {
+        parsedData.project = parsedData.project.map((proj) => ({
+          name: proj.name || "",
+          type: proj.type || "",
+          description: Array.isArray(proj.description)
+            ? proj.description
+            : [proj.description || ""],
+        }));
+      }
+    } catch (err) {
+      console.log("JSON PARSE ERROR:", extractedData);
+      return res.status(500).json({
+        message: "AI returned invalid JSON",
+      });
+    }
+
+    // ✅ Save resume
     const newResume = await Resume.create({
       userId,
       title,
       ...parsedData,
     });
 
-    res.status(200).json({
+    console.log("Saved Resume:", newResume);
+
+    return res.status(200).json({
+      success: true,
       resumeId: newResume._id,
     });
-
   } catch (error) {
-    console.log(error);
-
-    res.status(500).json({
+    console.log("UPLOAD ERROR", error);
+    return res.status(500).json({
       success: false,
-      message: "AI generation failed",
+      message: error.message || "AI generation failed",
     });
   }
 };

@@ -25,7 +25,7 @@ const resumeSchema = new mongoose.Schema(
       linkedin: { type: String, default: "" },
       website: { type: String, default: "" },
       profession: { type: String, default: "" },
-      image: { type: String, default: "" }, // ✅ fixed
+      image: { type: String, default: "" },
     },
 
     // 📝 Summary
@@ -48,7 +48,7 @@ const resumeSchema = new mongoose.Schema(
         position: String,
         start_date: String,
         end_date: String,
-        description: String,
+        description: [String],
         is_current: Boolean,
       },
     ],
@@ -64,14 +64,17 @@ const resumeSchema = new mongoose.Schema(
       },
     ],
 
-    // 🚀 Projects
-    project: [
-      {
-        name: String,
-        type: String,
-        description: String,
-      },
-    ],
+    // 🚀 project (🔥 FIX HERE)
+    project: {
+      type: [
+        {
+          name: { type: String, default: "" },
+          type: { type: String, default: "" },
+          description: { type: String, default: "" },
+        },
+      ],
+      default: [],
+    },
 
     // 🎨 UI Settings
     template: {
@@ -84,8 +87,11 @@ const resumeSchema = new mongoose.Schema(
       default: "#3b82f6",
     },
   },
-  { timestamps: true, minimize: false },
+  { timestamps: true, minimize: false }
 );
+
+// 🔥 IMPORTANT: avoid old schema cache issue
+delete mongoose.models.Resume;
 
 const Resume = mongoose.model("Resume", resumeSchema);
 

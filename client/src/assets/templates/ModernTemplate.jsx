@@ -152,14 +152,14 @@ const ModernTemplate = ({ data, accentColor }) => {
           </section>
         )}
 
-        {/* Projects */}
+        {/* project */}
         {data.project?.length > 0 && (
           <section className="mb-8">
             <h2
               className="text-2xl font-semibold mb-4 pb-2 border-b"
               style={{ borderColor: primary }}
             >
-              Projects
+              project
             </h2>
 
             <div className="space-y-6">
