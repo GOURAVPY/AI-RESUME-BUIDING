@@ -4,7 +4,7 @@ import { Banner, Hero, Feature, Testimonial, CallToAction, Footre } from "../com
 const Home = () => {
   return (
     <div className=" selection:bg-green-400">
-      <Banner />
+      {/* <Banner /> */}
       <Hero />
       <Feature />
       <Testimonial />

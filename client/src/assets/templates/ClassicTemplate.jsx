@@ -1,16 +1,20 @@
+import React from "react";
 import { Mail, Phone, MapPin, Linkedin, Globe } from "lucide-react";
 
 const ClassicTemplate = ({ data, accentColor }) => {
   const formatDate = (dateStr) => {
-    if (!dateStr) return "";
-    const [year, month] = dateStr.split("-");
-    return new Date(year, month - 1).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-    });
+    if (!dateStr || dateStr === "Present") return "Present";
+    try {
+      const [year, month] = dateStr.split("-");
+      return new Date(year, month - 1).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+      });
+    } catch (e) {
+      return dateStr;
+    }
   };
 
-  // ✅ FIX: moved OUTSIDE JSX
   const Section = ({ title, children }) => (
     <section className="mb-8">
       <h2
@@ -24,7 +28,7 @@ const ClassicTemplate = ({ data, accentColor }) => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto p-10 bg-white text-gray-800 leading-relaxed shadow-sm">
+    <div className="max-w-4xl mx-auto p-10 bg-white text-gray-800 leading-relaxed shadow-sm min-h-screen">
 
       {/* HEADER */}
       <header
@@ -32,11 +36,16 @@ const ClassicTemplate = ({ data, accentColor }) => {
         style={{ borderColor: accentColor }}
       >
         <h1
-          className="text-3xl font-bold tracking-wide mb-2"
+          className="text-4xl font-bold tracking-tight mb-1"
           style={{ color: accentColor }}
         >
           {data.personal_info?.full_name || "Your Name"}
         </h1>
+
+        {/* ADDED PROFESSION SECTION */}
+        <p className="text-lg font-medium text-gray-600 uppercase tracking-[0.15em] mb-4">
+          {data.personal_info?.profession || data.profession || "Professional Title"}
+        </p>
 
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-600">
           {data.personal_info?.email && (
@@ -83,7 +92,7 @@ const ClassicTemplate = ({ data, accentColor }) => {
       {/* SUMMARY */}
       {data.professional_summary && (
         <Section title="Professional Summary">
-          <p className="text-gray-700 text-[15px]">
+          <p className="text-gray-700 text-[15px] text-justify">
             {data.professional_summary}
           </p>
         </Section>
@@ -101,61 +110,58 @@ const ClassicTemplate = ({ data, accentColor }) => {
               >
                 <div className="flex justify-between flex-wrap gap-2">
                   <div>
-                    <h3 className="font-semibold text-gray-900">
+                    <h3 className="font-bold text-gray-900 uppercase tracking-wide">
                       {exp.position}
                     </h3>
-                    <p className="text-gray-700 font-medium">
+                    <p className="font-semibold" style={{ color: accentColor }}>
                       {exp.company}
                     </p>
                   </div>
 
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm font-medium text-gray-500 italic">
                     {formatDate(exp.start_date)} —{" "}
-                    {exp.is_current
-                      ? "Present"
-                      : formatDate(exp.end_date)}
+                    {exp.is_current ? "Present" : formatDate(exp.end_date)}
                   </span>
                 </div>
 
-                {exp.description && (
-                  <ul className="list-disc list-inside text-sm text-gray-700 mt-2 space-y-1">
-                    {exp.description.split("\n").map((line, i) => (
-                      <li key={i}>{line}</li>
-                    ))}
-                  </ul>
-                )}
+                {Array.isArray(exp.description) &&
+                  exp.description.length > 0 && (
+                    <ul className="list-disc list-outside ml-4 text-sm text-gray-700 mt-2 space-y-1.5">
+                      {exp.description.map((line, i) => (
+                        <li key={i}>{line}</li>
+                      ))}
+                    </ul>
+                  )}
               </div>
             ))}
           </div>
         </Section>
       )}
 
-      {/* project */}
+      {/* PROJECT */}
       {data.project?.length > 0 && (
-        <Section title="project">
+        <Section title="Key Projects">
           <div className="space-y-5">
             {data.project.map((proj, index) => (
-              <div key={index} className="pl-4 border-l-2 border-gray-300">
-                <h3 className="font-semibold text-gray-800">
+              <div key={index} className="pl-4 border-l-2 border-gray-200">
+                <h3 className="font-bold text-gray-800 uppercase text-sm">
                   {proj.name}
                 </h3>
 
                 {proj.type && (
-                  <p
-                    className="text-xs mb-1"
-                    style={{ color: accentColor }}
-                  >
+                  <p className="text-[11px] font-bold mb-2 uppercase tracking-wider" style={{ color: accentColor }}>
                     {proj.type}
                   </p>
                 )}
 
-                {proj.description && (
-                  <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
-                    {proj.description.split("\n").map((line, i) => (
-                      <li key={i}>{line}</li>
-                    ))}
-                  </ul>
-                )}
+                {Array.isArray(proj.description) &&
+                  proj.description.length > 0 && (
+                    <ul className="list-disc list-outside ml-4 text-sm text-gray-700 space-y-1">
+                      {proj.description.map((line, i) => (
+                        <li key={i}>{line}</li>
+                      ))}
+                    </ul>
+                  )}
               </div>
             ))}
           </div>
@@ -172,20 +178,20 @@ const ClassicTemplate = ({ data, accentColor }) => {
                 className="flex justify-between flex-wrap gap-2"
               >
                 <div>
-                  <h3 className="font-semibold text-gray-900">
+                  <h3 className="font-bold text-gray-900">
                     {edu.degree} {edu.field && `in ${edu.field}`}
                   </h3>
-                  <p className="text-gray-700">
+                  <p className="text-gray-700 italic">
                     {edu.institution}
                   </p>
                   {edu.gpa && (
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 font-medium">
                       GPA: {edu.gpa}
                     </p>
                   )}
                 </div>
 
-                <span className="text-sm text-gray-600">
+                <span className="text-sm font-medium text-gray-500">
                   {formatDate(edu.graduation_date)}
                 </span>
               </div>
@@ -196,13 +202,13 @@ const ClassicTemplate = ({ data, accentColor }) => {
 
       {/* SKILLS */}
       {data.skills?.length > 0 && (
-        <Section title="Core Skills">
+        <Section title="Technical Skills">
           <div className="flex flex-wrap gap-2">
             {data.skills.map((skill, index) => (
               <span
                 key={index}
-                className="text-sm px-3 py-1 border rounded-full"
-                style={{ borderColor: accentColor }}
+                className="text-[12px] font-bold px-3 py-1 border uppercase tracking-wider bg-gray-50"
+                style={{ borderColor: accentColor, color: accentColor }}
               >
                 {skill}
               </span>

@@ -1,70 +1,123 @@
 import React from "react";
+import { motion } from "motion/react";
 import { Facebook, Instagram, Linkedin, Twitter, Github } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
-    { icon: <Facebook size={20} />, href: "#", label: "Facebook" },
-    { icon: <Instagram size={20} />, href: "#", label: "Instagram" },
-    { icon: <Linkedin size={20} />, href: "#", label: "LinkedIn" },
-    { icon: <Twitter size={20} />, href: "#", label: "Twitter" },
-    { icon: <Github size={20} />, href: "#", label: "GitHub" },
+    { icon: <Facebook size={18} />, href: "#", label: "Facebook" },
+    { icon: <Instagram size={18} />, href: "#", label: "Instagram" },
+    { icon: <Linkedin size={18} />, href: "#", label: "LinkedIn" },
+    { icon: <Twitter size={18} />, href: "#", label: "Twitter" },
+    { icon: <Github size={18} />, href: "#", label: "GitHub" },
   ];
 
   const navLinks = ["Home", "Features", "Testimonials", "Contact"];
 
+  // Animation variants
+  const footerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1],
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <footer className="mt-[120px] w-full border-t border-slate-100">
-      {/* Gradient Decoration */}
-      <div className="h-1 w-full bg-gradient-to-r from-transparent via-green-400/30 to-transparent" />
+    <motion.footer 
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true }}
+      variants={footerVariants}
+      className="mt-[150px] w-full relative overflow-hidden"
+    >
+      {/* Premium Top Border Decoration */}
+      <div className="absolute top-0 left-0 w-full h-px bg-slate-100" />
+      <motion.div 
+        initial={{ width: 0, left: "50%" }}
+        whileInView={{ width: "60%", left: "20%" }}
+        transition={{ duration: 1.5, ease: "easeInOut" }}
+        className="absolute top-0 h-px bg-gradient-to-r from-transparent via-green-400 to-transparent" 
+      />
       
-      <div className="bg-white flex flex-col items-center justify-center w-full py-16 px-6">
-        {/* Navigation Links */}
-        <nav className="flex flex-wrap justify-center items-center gap-x-10 gap-y-4 mb-10">
+      <div className="bg-white flex flex-col items-center justify-center w-full py-24 px-6">
+        
+        {/* Navigation - Minimalist & Spaced */}
+        <motion.nav 
+          variants={itemVariants}
+          className="flex flex-wrap justify-center items-center gap-x-12 gap-y-4 mb-12"
+        >
           {navLinks.map((link) => (
-            <a
+            <motion.a
               key={link}
               href={`#${link.toLowerCase()}`}
-              className="font-semibold text-slate-500 hover:text-green-500 transition-colors duration-300"
+              whileHover={{ y: -2 }}
+              className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 hover:text-green-600 transition-colors duration-300"
             >
               {link}
-            </a>
+            </motion.a>
           ))}
-        </nav>
+        </motion.nav>
 
-        {/* Social Icons */}
-        <div className="flex items-center gap-6 text-slate-400">
+        {/* Brand Logo / Identity */}
+        <motion.div variants={itemVariants} className="mb-12">
+           <div className="text-2xl font-black tracking-tighter text-slate-900">
+             RESUM<span className="text-green-500 italic font-serif">AI</span>
+           </div>
+        </motion.div>
+
+        {/* Social Icons with Magnetic Feel */}
+        <motion.div variants={itemVariants} className="flex items-center gap-8 mb-16">
           {socialLinks.map((social, index) => (
-            <a
+            <motion.a
               key={index}
               href={social.href}
               aria-label={social.label}
-              className="hover:text-green-500 hover:-translate-y-1 transition-all duration-300 ease-out"
+              whileHover={{ scale: 1.2, rotate: 5, color: "#16a34a" }}
+              whileTap={{ scale: 0.9 }}
+              className="text-slate-300 transition-colors"
             >
               {social.icon}
-            </a>
+            </motion.a>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Divider */}
-        <div className="w-24 h-px bg-slate-100 my-10" />
+        {/* Subtle Separator */}
+        <div className="w-12 h-px bg-slate-100 mb-12" />
 
         {/* Copyright Section */}
-        <div className="text-center text-slate-400 font-medium">
+        <motion.div 
+          variants={itemVariants}
+          className="text-center text-slate-400 text-[13px] font-medium tracking-tight"
+        >
           <p>
-            Copyright © {currentYear}{" "}
-            <a 
-              className="text-slate-900 hover:text-green-500 transition-colors font-bold" 
-              href="https://prebuiltui.com"
+            &copy; {currentYear}{" "}
+            <motion.a 
+              whileHover={{ color: "#16a34a" }}
+              className="text-slate-900 font-bold decoration-green-500/30 underline-offset-4 hover:underline" 
+              href="https://github.com/GOURAVPY"
             >
-              RESUMAI.
-            </a>{" "}
-            All rights reserved.
+              GOURAVPY
+            </motion.a>{" "}
+            &mdash; Crafting the future of hiring.
           </p>
-        </div>
+        </motion.div>
       </div>
-    </footer>
+
+      {/* Decorative Blur in Footer Corner */}
+      <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-green-50 rounded-full blur-[100px] -z-10 opacity-60" />
+    </motion.footer>
   );
 };
 

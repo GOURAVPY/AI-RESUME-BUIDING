@@ -65,17 +65,13 @@ const resumeSchema = new mongoose.Schema(
     ],
 
     // 🚀 project (🔥 FIX HERE)
-    project: {
-      type: [
-        {
-          name: { type: String, default: "" },
-          type: { type: String, default: "" },
-          description: { type: String, default: "" },
-        },
-      ],
-      default: [],
-    },
-
+    project: [
+  {
+    name: { type: String, default: "" },
+    type: { type: String, default: "" },
+    description: { type: [String], default: [] }, // ✅ FIXED
+  },
+],
     // 🎨 UI Settings
     template: {
       type: String,

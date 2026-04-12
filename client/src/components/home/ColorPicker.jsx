@@ -1,5 +1,6 @@
-import { Check, Palette, ChevronDown, Pipette } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { Check, Palette, ChevronDown, Pipette } from "lucide-react";
 
 const ColorPicker = ({ selectedColor, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,89 +35,117 @@ const ColorPicker = ({ selectedColor, onChange }) => {
   }, []);
 
   return (
-    
     <div className="relative inline-block" ref={dropdownRef}>
-      
-      {/* Main Trigger Button - Responsive Text */}
-      <button
+      {/* Main Trigger Button */}
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className={`group flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 rounded-full border transition-all duration-300 ${
-          isOpen 
-          ? "bg-slate-900 border-slate-900 text-white shadow-lg" 
-          : "bg-white border-slate-200 text-slate-700 hover:border-slate-400 shadow-sm"
+        className={`group flex items-center gap-2 px-3 py-2 md:px-5 md:py-2.5 rounded-full border transition-all duration-500 ${
+          isOpen
+            ? "bg-slate-900 border-slate-900 text-white shadow-[0_10px_30px_-10px_rgba(0,0,0,0.3)]"
+            : "bg-white border-slate-200 text-slate-700 hover:border-slate-400 shadow-sm"
         }`}
       >
-        <Palette size={16} className={isOpen ? "animate-pulse" : "text-indigo-500"} />
+        <motion.div
+          animate={isOpen ? { rotate: 180 } : { rotate: 0 }}
+          transition={{ type: "spring", stiffness: 200, damping: 15 }}
+        >
+          <Palette size={16} className={isOpen ? "text-green-400" : "text-indigo-500"} />
+        </motion.div>
         
-        {/* Hidden on Mobile/Tablet (below 768px) */}
-        <span className="hidden md:block text-xs font-bold uppercase tracking-wider">Theme</span>
+        <span className="hidden md:block text-[10px] font-black uppercase tracking-[0.15em]">
+          Theme
+        </span>
         
-        {/* Dynamic Color Circle */}
         <div 
-          className="size-4 md:size-5 rounded-full border-2 border-white shadow-sm transition-transform group-hover:scale-110" 
+          className="size-4 md:size-5 rounded-full border-2 border-white shadow-sm ring-1 ring-slate-100 transition-transform" 
           style={{ backgroundColor: selectedColor }} 
         />
 
-        <ChevronDown size={14} className={`hidden md:block transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
-      </button>
+        <ChevronDown 
+          size={14} 
+          className={`hidden md:block opacity-40 transition-transform duration-500 ${isOpen ? "rotate-180" : ""}`} 
+        />
+      </motion.button>
 
-      {/* Dropdown Popover - Center aligned on mobile */}
-      {isOpen && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 lg:left-0 lg:translate-x-0 mt-3 p-5 z-[100] bg-white/95 backdrop-blur-xl rounded-[2rem] border border-slate-200 shadow-2xl w-[260px] md:w-[280px] animate-in fade-in zoom-in-95 duration-200 origin-top">
-          
-          <div className="flex items-center justify-between mb-4 px-1">
-             <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Presets</h4>
-             <span className="text-[10px] font-mono text-slate-400">{selectedColor.toUpperCase()}</span>
-          </div>
-
-          <div className="grid grid-cols-5 gap-2 md:gap-3 mb-6">
-            {colors.map((color) => (
-              <button
-                key={color.value}
-                title={color.name}
-                onClick={() => {
-                  onChange(color.value);
-                  setIsOpen(false);
-                }}
-                className="relative group size-9 md:size-10 rounded-xl transition-all duration-300 hover:scale-110 active:scale-90 flex items-center justify-center overflow-hidden"
-                style={{ backgroundColor: color.value }}
-              >
-                <div className="absolute inset-0 border-2 border-white/20 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                
-                {selectedColor.toLowerCase() === color.value.toLowerCase() && (
-                  <div className="bg-white/20 backdrop-blur-sm size-full flex items-center justify-center animate-in zoom-in duration-300">
-                    <Check className="size-4 md:size-5 text-white" strokeWidth={3} />
-                  </div>
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Custom Color Selection */}
-          <div className="border-t border-slate-100 pt-5">
-            <div className="flex items-center gap-3 bg-slate-50 p-2 rounded-2xl border border-slate-100 group focus-within:border-indigo-300 transition-all">
-                <div className="relative size-9 md:size-10 shrink-0">
-                    <input
-                        type="color"
-                        value={selectedColor}
-                        onChange={(e) => onChange(e.target.value)}
-                        className="absolute inset-0 opacity-0 size-full cursor-pointer z-10"
-                    />
-                    <div 
-                        className="size-full rounded-xl border-2 border-white shadow-sm flex items-center justify-center"
-                        style={{ backgroundColor: selectedColor }}
-                    >
-                        <Pipette size={14} className="text-white mix-blend-difference" />
-                    </div>
-                </div>
-                <div className="flex flex-col">
-                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-tighter">Custom</span>
-                    <span className="text-[11px] font-bold text-slate-700">Pick color...</span>
-                </div>
+      {/* Dropdown Popover */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.9, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: 10, scale: 0.9, filter: "blur(10px)" }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="absolute top-full left-1/2 -translate-x-1/2 lg:left-0 lg:translate-x-0 mt-4 p-6 z-[100] bg-white/80 backdrop-blur-2xl rounded-[2.5rem] border border-slate-200/60 shadow-[0_30px_100px_-20px_rgba(0,0,0,0.15)] w-[280px] origin-top"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5 px-1">
+               <h4 className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">System Palette</h4>
+               <div className="px-2 py-0.5 rounded-md bg-slate-100 text-[9px] font-mono font-bold text-slate-500">
+                 {selectedColor.toUpperCase()}
+               </div>
             </div>
-          </div>
-        </div>
-      )}
+
+            {/* Colors Grid */}
+            <div className="grid grid-cols-5 gap-3 mb-6">
+              {colors.map((color, i) => (
+                <motion.button
+                  key={color.value}
+                  initial={{ opacity: 0, scale: 0 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.02, type: "spring", stiffness: 300 }}
+                  whileHover={{ scale: 1.15, rotate: 5 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => {
+                    onChange(color.value);
+                    setIsOpen(false);
+                  }}
+                  className="relative size-10 rounded-xl flex items-center justify-center overflow-hidden shadow-sm"
+                  style={{ backgroundColor: color.value }}
+                >
+                  <div className="absolute inset-0 border-2 border-white/30 rounded-xl" />
+                  {selectedColor.toLowerCase() === color.value.toLowerCase() && (
+                    <motion.div 
+                      layoutId="check"
+                      className="bg-white/20 backdrop-blur-[2px] size-full flex items-center justify-center"
+                    >
+                      <Check className="size-5 text-white" strokeWidth={4} />
+                    </motion.div>
+                  )}
+                </motion.button>
+              ))}
+            </div>
+
+            {/* Custom Color Footer */}
+            <div className="pt-5 border-t border-slate-100">
+              <motion.div 
+                whileHover={{ backgroundColor: "rgba(241, 245, 249, 1)" }}
+                className="flex items-center gap-4 bg-slate-50/50 p-3 rounded-[1.5rem] border border-slate-100 transition-colors relative"
+              >
+                  <div className="relative size-10 shrink-0">
+                    <input
+                      type="color"
+                      value={selectedColor}
+                      onChange={(e) => onChange(e.target.value)}
+                      className="absolute inset-0 opacity-0 size-full cursor-pointer z-20"
+                    />
+                    <motion.div 
+                      animate={{ backgroundColor: selectedColor }}
+                      className="size-full rounded-xl border-2 border-white shadow-md flex items-center justify-center"
+                    >
+                      <Pipette size={16} className="text-white mix-blend-difference" />
+                    </motion.div>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-black uppercase text-slate-400 tracking-widest">Eyedropper</span>
+                    <span className="text-xs font-bold text-slate-700">Custom Hue</span>
+                  </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
